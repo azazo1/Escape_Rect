@@ -1,4 +1,5 @@
-# coding = utf-8
+# coding=utf-8
+
 import pygame
 
 
@@ -12,10 +13,10 @@ class MyChar(pygame.sprite.Sprite):
     def moveto(self, x, y):
         self.rect.left = x
         self.rect.top = y
-        
+
     def move(self, x, y):
         self.rect.left += x
         self.rect.top += y
-        
+
     def update(self, *args, **kwargs):
         pygame.draw.rect(self.target, self.color, self.rect)
