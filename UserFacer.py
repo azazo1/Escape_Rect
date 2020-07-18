@@ -14,7 +14,7 @@ class UserFacer:
     def __init__(self):
         self.clock = pygame.time.Clock()
         self.root = None
-        self.size = 700, 400
+        self.size = self.osize = 700, 400
         self.fps = 60  # 更改会使游戏失常
         self.font = r'C:\Windows\Fonts\Consola.ttf'
         self.fontsize = 20
@@ -27,6 +27,7 @@ class UserFacer:
         self.min_distanse = 100
         self.max_distanse = 200
         self.last_distanse = 0  # 可忽视
+        self.resizekey = [pygame.K_TAB]
         self.startkey = [pygame.K_RETURN, pygame.K_r]
         self.quitkey = [pygame.K_ESCAPE, pygame.K_q, 48]
 
@@ -55,6 +56,8 @@ class UserFacer:
                         if clickrect.y < y < clickrect.bottom:
                             return True
                 if event.type == pygame.KEYDOWN:
+                    if event.key in self.resizekey:
+                        self.root = root = pygame.display.set_mode(self.osize, pygame.RESIZABLE)
                     if event.key in self.startkey:
                         self.close()
                         return True
@@ -89,7 +92,7 @@ class UserFacer:
                 text2pos = (int(sw / 2 - w / 2), int(sh / 2 - h / 2 + text1.get_rect().height))  # 固定式摆法
                 root.blit(text2, text2pos)
 
-            textbottom = Myfont.render(['[R] or [RETURN] or [CLICK HERE] to START',"You Win!"][win],
+            textbottom = Myfont.render(['[R] or [RETURN] or [CLICK HERE] to START', "You Win!"][win],
                                        True, self.fontcolor)
             w, h = textbottom.get_rect().size
             textbottommovedistansex = sw - w
