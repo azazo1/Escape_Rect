@@ -9,7 +9,7 @@ pygame.init()
 
 
 class UserFacer:
-    version = '0.45'
+    version = '0.45.1'
 
     def __init__(self):
         self.clock = pygame.time.Clock()
@@ -21,8 +21,8 @@ class UserFacer:
         self.fontcolor = (255, 0, 0)
         self.background = (0, 0, 0)
         self.running = False
-        self.min_enemy_num = 1
-        self.max_enemy_num = 5
+        self.min_enemy_num = 1  # 最小敌人数
+        self.max_enemy_num = 5  # 最大敌人数
         self.last_enemy_num = 0  # 可忽视
         self.min_distanse = 100
         self.max_distanse = 200
@@ -74,8 +74,8 @@ class UserFacer:
                 f'Escape_Rect Version:{self.version}——Author:azazo1' if first else f'Enemies:{self.last_enemy_num} Seconds:{time:.2f} Size:{size}',
                 True, self.fontcolor)
             ow, oh = otext1.get_rect().size
-            size = int(sw / 2), int(sw / 2 / ow * oh)
-            text1 = pygame.transform.scale(otext1, size)
+            text1size = int(sw / 2), int(sw / 2 / ow * oh)
+            text1 = pygame.transform.scale(otext1, text1size)
             w, h = text1.get_rect().size
             text1pos = (int(sw / 2 - w / 2), int(sh / 2 - h / 2))  # 固定式摆法
             root.blit(text1, text1pos)
@@ -86,8 +86,8 @@ class UserFacer:
                 True, self.fontcolor)
             ow, oh = otext2.get_rect().size
             if ow - 1:
-                size = int(sw / 2), int(sw / 2 / ow * oh)
-                text2 = pygame.transform.scale(otext2, size)
+                text2size = int(sw / 2), int(sw / 2 / ow * oh)
+                text2 = pygame.transform.scale(otext2, text2size)
                 w, h = text2.get_rect().size
                 text2pos = (int(sw / 2 - w / 2), int(sh / 2 - h / 2 + text1.get_rect().height))  # 固定式摆法
                 root.blit(text2, text2pos)
