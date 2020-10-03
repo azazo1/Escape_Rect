@@ -1,6 +1,6 @@
 # coding=utf-8
 import math
-
+import random
 import pygame
 from random import randint
 from Character import MyChar
@@ -20,7 +20,7 @@ class Enemy(MyChar):
         self.distanse = distanse  # 随机移动到玩家的最大距离（越大玩家越安全）
         self.movetimes = 0
         self.endmoveper = 40
-        self.sleeptime = 0.5
+        self.sleeptime = random.random()
         self.lastsleeptime = time.time()
         self.lives = 5  # 生命数
 
@@ -61,7 +61,7 @@ class Enemy(MyChar):
         self.targetx, self.targety = x, y
 
     def update(self, *args, **kwargs):
-        super(Enemy, self).update()
+        super(Enemy, self).update(text=f'{self.sleeptime:.2f}')
         self.moveper = self.groups()[0].moveper  # 根据Controller.py改变移动概率
         self.movespeed = max((self.endmoveper - self.moveper) // 5, 0.1)
         if randint(0, 100) < self.moveper and (

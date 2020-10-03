@@ -9,7 +9,7 @@ pygame.init()
 
 
 class UserFacer:
-    version = '0.45.1'
+    version = '0.45.3'
 
     def __init__(self):
         self.clock = pygame.time.Clock()
