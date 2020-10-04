@@ -9,12 +9,13 @@ pygame.init()
 
 
 class UserFacer:
-    version = '0.45.3'
+    version = '0.45.3.1'
 
     def __init__(self):
         self.clock = pygame.time.Clock()
         self.root = None
         self.size = self.osize = 700, 400
+        self.minSize = 300, 200
         self.fps = 60  # 更改会使游戏失常
         self.font = r'C:\Windows\Fonts\Consola.ttf'
         self.fontsize = 20
@@ -65,8 +66,9 @@ class UserFacer:
                         self.close()
                         return False
                 if event.type == pygame.VIDEORESIZE:
-                    self.root = root = pygame.display.set_mode(event.size, pygame.RESIZABLE)
-                    self.size = event.size
+                    size = max(event.size[0], self.minSize[0]), max(event.size[1], self.minSize[1])
+                    self.root = root = pygame.display.set_mode(size, pygame.RESIZABLE)
+                    self.size = size
             mouseposx, mouseposy = pygame.mouse.get_pos()
             sw, sh = root.get_rect().size
             # 摆放文字
