@@ -1,7 +1,8 @@
 # coding = utf-8
 import pygame
 import time
-
+import traceback
+import sys
 
 class GroupManager(pygame.sprite.Group):
     def __init__(self, targetscreen):
@@ -15,11 +16,11 @@ class GroupManager(pygame.sprite.Group):
         self.g = int(targetscreen.get_rect().height / 30)
         self.x, self.y = self.target.get_rect().size
         self.movespeed = int(self.target.get_rect().width / 70)  # 根据屏幕宽度调整移动速度
-        self.rightkey = [pygame.K_d, pygame.K_RIGHT, 1073741903, 54]
-        self.leftkey = [pygame.K_a, pygame.K_LEFT, 1073741904, 52]
-        self.downkey = [pygame.K_s, pygame.K_DOWN, 1073741905, 56]
-        self.upkey = [pygame.K_w, pygame.K_UP, 1073741906, 50]
-        self.jumpkey = [pygame.K_SPACE, pygame.K_w, pygame.K_UP, 1073741906, 50]
+        self.rightkey = [pygame.K_d, pygame.K_RIGHT, 1000000000000000]
+        self.leftkey = [pygame.K_a, pygame.K_LEFT]
+        self.downkey = [pygame.K_s, pygame.K_DOWN]
+        self.upkey = [pygame.K_w, pygame.K_UP]
+        self.jumpkey = [pygame.K_SPACE, pygame.K_w, pygame.K_UP]
         self.playerlastmovetime = time.time()  # 玩家上次移动时间
         self.playermaxstatictime = 5  # 玩家最大静止时间
         self.playlastposition = (0, 0)
@@ -77,5 +78,8 @@ class GroupManager(pygame.sprite.Group):
 
     def checkkey(self, keys, direct):
         for i in direct:
-            if keys[i]:
-                return True
+            try:
+                if keys[i]:
+                    return True
+            except Exception as e:
+                pass
