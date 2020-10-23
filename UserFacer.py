@@ -18,7 +18,7 @@ class UserFacer:
         self.size = self.osize = Configuration.ScreenSize
         self.minSize = Configuration.MinSize
         self.fps = Configuration.FPS  # 更改会使游戏失常
-        self.font = r'C:\Windows\Fonts\Consola.ttf'
+        self.font = Configuration.Font
         self.fontsize = 20  # 修改会使按钮失常
         self.fontcolor = Configuration.FontColor
         self.background = Configuration.BackGround
