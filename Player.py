@@ -1,6 +1,7 @@
 # coding=utf-8
-import time
+import random
 
+import Base
 import pygame
 
 from Character import MyChar
@@ -55,18 +56,18 @@ class Player(MyChar):
         self.jumpmaxtimes = 10  # 空中跳的次数(地面上也有一次)
         self.jumptimes = 0
         self.lives = self.olives = 5  # 生命数
-        self.lastdietime = 0
-        self.undeadabletime = 0.5  # 无敌时间
-        self.skillsleepingtime = 7  # 技能CD
-        self.lastskilltime = 0
+        self.lastHurtTime = 0
+        self.undeadabletime = 5000  # 无敌时间
+        self.skillSleepingTime = 7000  # 技能CD
+        self.lastSkillTime = -self.skillSleepingTime - 1  # 上次技能施放时间（初始值最小为了在开局能释放技能）
         self.skilleffect = 50  # 技能效果
         self.skillcolor = (50, 50, 50)
-        self.skilllastedtime = 3  # 技能持续时间
+        self.skilllastedtime = 3000  # 技能持续时间
         self.skillrange = int((self.target.get_rect().width + self.target.get_rect().height) / 2 / 7)  # 技能范围
         self.skillingposition = (-100, -100)  # 技能初始位置
         self.particles = ParticlesGroup()  # 粒子效果
         self.particle_move_length = self.target.get_rect().width / 15  # 粒子移动距离
-        self.skill() # 开局释放技能
+        self.skill()  # 开局释放技能
 
     def jump(self):
         if self.jumptimes == 0:
@@ -98,10 +99,10 @@ class Player(MyChar):
         self.rect.bottom = min(self.rect.bottom, sh)
 
     def skill(self):  # 技能：保护罩
-        nowtime = time.time()
-        if nowtime - self.lastskilltime >= self.skillsleepingtime:  # 时间判定
+        nowtime = Base.getTimeMil()
+        if nowtime - self.lastSkillTime >= self.skillSleepingTime:  # 时间判定
             self.skillingposition = self.rect.midbottom[0], self.rect.midleft[1]
-            self.lastskilltime = nowtime
+            self.lastSkillTime = nowtime
 
     def fall(self, speed):
         if self.jumping:
@@ -114,20 +115,19 @@ class Player(MyChar):
             self.move(0, speed)
 
     def check(self, sprites):
-        nowtime = time.time()
-        if self.lastskilltime + self.skilllastedtime <= nowtime:  # 解除保护罩
-            self.skillingposition = -100, -100
-        else:
-            pygame.draw.circle(self.target, self.skillcolor, self.skillingposition, self.skillrange, 3)
+        nowtime = Base.getTimeMil()
+        if self.lastSkillTime + self.skilllastedtime <= nowtime:  # 解除保护罩
+            self.skillingposition = -self.skillrange, -self.skillrange
         for sprite in sprites:
-            nowtime = time.time()
+            nowtime = Base.getTimeMil()
             if sprite.rect.left < self.rect.midtop[0] < sprite.rect.right and \
                     sprite.rect.top < self.rect.midtop[1] < sprite.rect.bottom and \
-                    nowtime >= self.lastdietime + self.undeadabletime:
-                self.lastdietime = nowtime
+                    nowtime >= self.lastHurtTime + self.undeadabletime:
+                self.lastHurtTime = nowtime
                 self.lives -= 1
                 return self.lives <= 0
 
     def update(self, *args, **kwargs):
         super(Player, self).update()
+        pygame.draw.circle(self.target, self.skillcolor, self.skillingposition, self.skillrange, random.randint(1, 5))
         self.particles.update()

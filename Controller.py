@@ -1,40 +1,38 @@
-# coding = utf-8
+# coding=utf-8
 import pygame
-import time
-import traceback
-import sys
+
+import Base
+
 
 class GroupManager(pygame.sprite.Group):
     def __init__(self, targetscreen):
         super(GroupManager, self).__init__()
-        self.lasttime = time.time()
+        self.lasttime = Base.getTimeMil()
         self.player = None
         self.moveper = self.omoveper = 2  # 初始移动概率
         self.moveperincrease = 0.05  # 移动概率增长速度
-        self.winnermoveper = 35 # 胜利移动概率
+        self.winnermoveper = 35  # 胜利移动概率
         self.target = targetscreen
         self.g = int(targetscreen.get_rect().height / 30)
         self.x, self.y = self.target.get_rect().size
         self.movespeed = int(self.target.get_rect().width / 70)  # 根据屏幕宽度调整移动速度
-        self.rightkey = [pygame.K_d, pygame.K_RIGHT, 1000000000000000]
+        self.rightkey = [pygame.K_d, pygame.K_RIGHT]
         self.leftkey = [pygame.K_a, pygame.K_LEFT]
         self.downkey = [pygame.K_s, pygame.K_DOWN]
         self.upkey = [pygame.K_w, pygame.K_UP]
         self.jumpkey = [pygame.K_SPACE, pygame.K_w, pygame.K_UP]
-        self.playerlastmovetime = time.time()  # 玩家上次移动时间
-        self.playermaxstatictime = 5  # 玩家最大静止时间
+        self.playerlastmovetime = Base.getTimeMil()  # 玩家上次移动时间
+        self.playermaxstatictime = 5000  # 玩家最大静止时间
         self.playlastposition = (0, 0)
 
     def setplayer(self, player):
         self.player = player
 
     def update(self, events, *args, **kwargs):
-        nowtime = time.time()
-        if nowtime - self.lasttime > 1:
+        nowtime = Base.getTimeMil()
+        if nowtime - self.lasttime > 1000:
             self.moveper += self.moveperincrease
             self.lasttime = nowtime
-        mouseleft = pygame.mouse.get_pressed()[0]
-        sw, sh = self.target.get_rect()[2:]
         for e in events:
             if e.type == pygame.KEYDOWN:
                 self.moveper += self.moveperincrease / 2

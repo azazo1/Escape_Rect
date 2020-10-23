@@ -3,12 +3,14 @@ import math
 import random
 import pygame
 from random import randint
+
+import Base
+import Configuration
 from Character import MyChar
-import time
 
 
 class Enemy(MyChar):
-    def __init__(self, targetscreen, width, height, color=(0, 0, 255), moveper=20, movespeed=10, distanse=50):
+    def __init__(self, targetscreen, width, height, color=(0, 0, 255), moveper=20, movespeed=10):
         super().__init__(targetscreen, width, height, color)
         if randint(0, 1):  # 随机从左上角或右上角出现
             self.rect.right = targetscreen.get_rect()[2]
@@ -17,11 +19,12 @@ class Enemy(MyChar):
         self.moving = False
         self.moveper = moveper
         self.movespeed = movespeed  # 移动速度越小越快
-        self.distanse = distanse  # 随机移动到玩家的最大距离（越大玩家越安全）
+        self.distanse = 100  # 随机移动到玩家的最大距离（越大玩家越安全）
         self.movetimes = 0
         self.endmoveper = 40
-        self.sleeptime = random.random()
-        self.lastsleeptime = time.time()
+        self.maxSleepTime = 1000
+        self.sleeptime = random.randint(0, self.maxSleepTime)
+        self.lastsleeptime = Base.getTimeMil()
         self.lives = 5  # 生命数
 
     def checkskilled(self):
@@ -61,13 +64,13 @@ class Enemy(MyChar):
         self.targetx, self.targety = x, y
 
     def update(self, *args, **kwargs):
-        super(Enemy, self).update(text=f'{self.sleeptime:.2f}')
+        super(Enemy, self).update(text=f'{self.sleeptime}' if Configuration.EnemySleepTimeShowing else '')
         self.moveper = self.groups()[0].moveper  # 根据Controller.py改变移动概率
         self.movespeed = max((self.endmoveper - self.moveper) // 5, 0.1)
         if randint(0, 100) < self.moveper and (
-                (time.time() - self.lastsleeptime) > self.sleeptime):
+                (Base.getTimeMil() - self.lastsleeptime) > self.sleeptime):
             self.summonpoint()
-            self.lastsleeptime = time.time()
+            self.lastsleeptime = Base.getTimeMil()
         else:
             self.checkskilled()
         self.smoothmove()
