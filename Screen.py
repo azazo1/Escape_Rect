@@ -11,6 +11,7 @@ from Controller import GroupManager
 
 class GameScreen:
     def __init__(self, root=None, size=Configuration.ScreenSize, background=Configuration.BackGround, fps=60):
+        Base.clearTime()  # 重置游戏计时
         self.clock = pygame.time.Clock()
         self.fps = fps
         self.size = size
@@ -138,7 +139,6 @@ class GameScreen:
 
     def close(self):
         self.running = False
-        Base.clearTime()
 
 
 def main():
