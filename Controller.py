@@ -2,6 +2,7 @@
 import pygame
 
 import Base
+import Player
 
 
 class GroupManager(pygame.sprite.Group):
@@ -9,13 +10,12 @@ class GroupManager(pygame.sprite.Group):
         super(GroupManager, self).__init__()
         self.lasttime = Base.getTimeMil()
         self.buttons = []
-        self.player = None
-        self.moveper = self.omoveper = 2  # 初始移动概率
-        self.moveperincrease = 0.05  # 移动概率增长速度
-        self.winnermoveper = 35  # 胜利移动概率
-        self.target = targetscreen
+        self.player: Player.Player = None
+        self.moveper = self.omoveper = 2  # 初始MovePer
+        self.moveperincrease = 0.05  # MovePer增长速度
+        self.winnermoveper = 35  # 胜利MovePer
+        self.target: Base.MyFrame = targetscreen
         self.g = int(targetscreen.get_rect().height / 30)
-        self.x, self.y = self.target.get_rect().size
         self.rightkey = [pygame.K_d, pygame.K_RIGHT]
         self.leftkey = [pygame.K_a, pygame.K_LEFT]
         self.downkey = [pygame.K_s, pygame.K_DOWN]
@@ -37,14 +37,16 @@ class GroupManager(pygame.sprite.Group):
             if e.type == pygame.KEYDOWN:
                 self.moveper += self.moveperincrease / 2
 
-            if e.type == pygame.MOUSEMOTION or e.type == pygame.MOUSEBUTTONDOWN:
-                self.x, self.y = e.pos
+            if e.type == pygame.MOUSEBUTTONDOWN:
+                if pygame.mouse.get_pressed()[2]:
+                    targetPos = [ep - tp for tp, ep in zip(self.target.pos, e.pos)]
+                    self.player.rush(targetPos)
 
         for b in self.buttons:  # 检测Button
             b: Base.Button
             c = b.command
             if b.checkPressed():
-                (self.player.left, self.player.right, self.player.jump, self.player.skill)[c]()
+                (self.player.left, self.player.right, self.player.jump, self.player.skill)[c]()  # 此处顺序按照按钮说明排列
 
         # 检测键盘
         keys = pygame.key.get_pressed()

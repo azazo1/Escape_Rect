@@ -56,6 +56,8 @@ class UserFacer:
                     x, y = event.pos
                     if clickRect.x < x < clickRect.right:
                         if clickRect.y < y < clickRect.bottom:
+                            self.root = pygame.display.set_mode(self.root.get_size())
+                            self.close()
                             return True
                     if settingClickRect.x < x < settingClickRect.right:
                         if settingClickRect.y < y < settingClickRect.bottom:
@@ -64,6 +66,7 @@ class UserFacer:
                     if event.key in self.setttingKey:
                         Base.setting()
                     if event.key in self.startkey:
+                        self.root = pygame.display.set_mode(self.root.get_size())
                         self.close()
                         return True
                     if event.key in self.quitkey:

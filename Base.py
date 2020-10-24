@@ -24,11 +24,26 @@ def getTimeSec():  # 返回时间 秒
 
 
 def setting():
+    def getPasswordInput():
+        if Configuration.Invincible:
+            return True
+        root = tk.Tk()
+        root.title('输入密码')
+        root.geometry(f'{Configuration.MinSize[0]}x{Configuration.MinSize[1]}+10+10')
+        inputPassword = tk.StringVar()
+        root.protocol('WM_WINDOW_DELETE', lambda *a: inputPassword.set(Configuration.Password + ' '))
+        tk.Entry(root, width=20, textvariable=inputPassword, show='*').pack()
+        tk.Button(root, text='确定', command=root.destroy).pack()
+        root.mainloop()
+        return inputPassword.get() == Configuration.Password
+
     def confirm():
+        window.destroy()
         Configuration.RelShowing = relShowing.get()
         Configuration.ButtonShowing = buttonShowing.get()
         Configuration.EnemySleepTimeShowing = enemySleepTimeShowing.get()
-        window.destroy()
+        Configuration.Invincible = invincible.get() and getPasswordInput()
+        Configuration.ParticlesShowing = particlesShowing.get()
 
     window = tk.Tk()
     window.title('设置')
@@ -40,17 +55,26 @@ def setting():
     buttonShowing.set(Configuration.ButtonShowing)
     enemySleepTimeShowing = tk.BooleanVar()
     enemySleepTimeShowing.set(Configuration.EnemySleepTimeShowing)
+    invincible = tk.BooleanVar()
+    invincible.set(Configuration.Invincible)
+    particlesShowing = tk.BooleanVar()
+    particlesShowing.set(Configuration.ParticlesShowing)
 
-    relShowingButton = tk.Checkbutton(window, text='视角随角色移动', onvalue=True, offvalue=False, variable=relShowing)
+    invincibleButton = tk.Checkbutton(window, text='无敌', onvalue=True, offvalue=False, variable=invincible)
     buttonShowingButton = tk.Checkbutton(window, text='显示控制按钮', onvalue=True, offvalue=False,
                                          variable=buttonShowing)
+    relShowingButton = tk.Checkbutton(window, text='视角随角色移动', onvalue=True, offvalue=False, variable=relShowing)
+    particlesShowingButton = tk.Checkbutton(window, text='显示粒子与效果', onvalue=True, offvalue=False,
+                                            variable=particlesShowing)
     enemySleepTimeShowingButton = tk.Checkbutton(window, text='显示每个敌人移动间隙（毫秒）', onvalue=True, offvalue=False,
                                                  variable=enemySleepTimeShowing)
     confirmButton = tk.Button(window, text='确认', command=confirm)
 
-    relShowingButton.pack()
-    enemySleepTimeShowingButton.pack()
+    invincibleButton.pack()
     buttonShowingButton.pack()
+    relShowingButton.pack()
+    particlesShowingButton.pack()
+    enemySleepTimeShowingButton.pack()
     confirmButton.pack()
     window.mainloop()
 

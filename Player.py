@@ -4,6 +4,7 @@ import random
 import Base
 import pygame
 
+import Configuration
 from Character import MyChar
 
 
@@ -48,12 +49,12 @@ class Player(MyChar):
         super(Player, self).__init__(targetscreen, width, height, color)
         x, y = self.target.get_rect()[2:]  # 将玩家安放在屏幕中间
         self.moveto(x / 2, y)
-        self.changeX, self.changeY = 0, 0
+        self.moveSpeed = 5
         self.jumpsize = self.target.get_rect()[3] / 2
         self.jumprest = 0
         self.jumping = False
         self.jumpspeed = 3  # 越小越快
-        self.jumpmaxtimes = 10  # 空中跳的次数(地面上也有一次)
+        self.jumpmaxtimes = 5  # 空中跳的次数(地面上也有一次)
         self.jumptimes = 0
         self.lastJumpTime = 0
         self.jumpingSleepTime = 300  # 跳跃时间间隔（防止连跳）
@@ -70,7 +71,19 @@ class Player(MyChar):
         self.particles = ParticlesGroup()  # 粒子效果
         self.particle_move_length = self.target.get_rect().width / 15  # 粒子移动距离
         self.skill()  # 开局释放技能
-        self.moveSpeed = 5
+        self.rushing = False
+        self.rushingTime = 100  # 冲刺时间
+        self.rushSleepTime = 2000  # 冲刺休息时间
+        self.lastRushTime = 0  # 上次冲刺时间
+        self.rushArc = self.rect.center, self.rect.center
+
+    def rush(self, pos: list):  # 用center位置判断冲刺
+        self.jumping = False
+        nowTime = Base.getTimeMil()
+        if self.lastRushTime + self.rushSleepTime < nowTime:
+            self.rushing = True
+            self.rushArc = self.rect.center, tuple(pos)
+            self.lastRushTime = nowTime
 
     def left(self):
         self.move(-self.moveSpeed, 0)
@@ -89,14 +102,28 @@ class Player(MyChar):
             self.jumping = True
             self.jumprest = self.jumpsize
             if self.jumptimes >= 2:  # 显示连跳粒子
-                oripos = self.rect.midbottom
-                leftpos = oripos[0] - self.particle_move_length, oripos[1]  # 左粒子坐标
-                rightpos = oripos[0] + self.particle_move_length, oripos[1]  # 右粒子坐标
-                bottompos = oripos[0], oripos[1] + self.particle_move_length  # 下粒子坐标
-                size = (self.target.get_rect().width + self.target.get_rect().height) / 2 / 80  # 粒子尺寸
-                self.particles.add(Particle(self.target, oripos, leftpos, size, size))
-                self.particles.add(Particle(self.target, oripos, rightpos, size, size))
-                self.particles.add(Particle(self.target, oripos, bottompos, size, size))
+                self.placeParticles()
+
+    def placeParticles(self):
+        if not Configuration.ParticlesShowing:
+            return
+        oripos = self.rect.midbottom
+        leftpos = oripos[0] - self.particle_move_length, oripos[1]  # 左粒子坐标
+        rightpos = oripos[0] + self.particle_move_length, oripos[1]  # 右粒子坐标
+        bottompos = oripos[0], oripos[1] + self.particle_move_length  # 下粒子坐标
+        size = (self.target.get_rect().width + self.target.get_rect().height) / 2 / 80  # 粒子尺寸
+        self.particles.add(Particle(self.target, oripos, leftpos, size, size))
+        self.particles.add(Particle(self.target, oripos, rightpos, size, size))
+        self.particles.add(Particle(self.target, oripos, bottompos, size, size))
+
+    def moveto(self, x, y):
+        super(Player, self).moveto(x, y)
+        a, b, sw, sh = self.target.get_rect()
+        # 防止超出边缘
+        self.rect.left = max(self.rect.left, 0)
+        self.rect.right = min(self.rect.right, sw)
+        self.rect.top = max(self.rect.top, 0)
+        self.rect.bottom = min(self.rect.bottom, sh)
 
     def move(self, x, y):
         super(Player, self).move(x, y)
@@ -113,11 +140,20 @@ class Player(MyChar):
     def skill(self):  # 技能：保护罩
         nowtime = Base.getTimeMil()
         if nowtime - self.lastSkillTime >= self.skillSleepingTime:  # 时间判定
-            self.skillingposition = self.rect.midbottom[0], self.rect.midleft[1]
+            self.skillingposition = self.rect.center
             self.lastSkillTime = nowtime
 
-    def fall(self, speed):
-        if self.jumping:
+    def fall(self, speed):  # 角色位移操作的执行层
+        nowTime = Base.getTimeMil()
+        if self.rushing:
+            process = ((nowTime - self.lastRushTime) / self.rushingTime) ** (1 / 2)  # 冲刺进度
+            start, end = self.rushArc
+            nowPos = [(e - s) * process + s for s, e in zip(start, end)]
+            self.moveto(*nowPos)
+            self.placeParticles()
+            if process >= 1:
+                self.rushing = False
+        elif self.jumping:
             up = self.jumprest // self.jumpspeed
             self.jumprest -= up
             self.move(0, -up)
@@ -136,10 +172,11 @@ class Player(MyChar):
                     sprite.rect.top < self.rect.midtop[1] < sprite.rect.bottom and \
                     nowtime >= self.lastHurtTime + self.undeadabletime:
                 self.lastHurtTime = nowtime
-                self.lives -= 1
+                self.lives -= not Configuration.Invincible  # 用了True为1，False为0
                 return self.lives <= 0
 
     def update(self, *args, **kwargs):
         super(Player, self).update()
-        pygame.draw.circle(self.target, self.skillcolor, self.skillingposition, self.skillrange, random.randint(1, 5))
+        pygame.draw.circle(self.target, self.skillcolor, self.skillingposition, self.skillrange,
+                           random.randint(1, 5) if Configuration.ParticlesShowing else 1)
         self.particles.update()

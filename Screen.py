@@ -1,4 +1,5 @@
 # coding=utf-8
+import random
 import sys
 import traceback
 import Configuration
@@ -91,10 +92,20 @@ class GameScreen:
                     return
 
                 # 摆放技能CD
-                restpercent = max((player.lastSkillTime + player.skillSleepingTime - Base.getTimeMil()) /
+                restPercent = max((player.lastSkillTime + player.skillSleepingTime - Base.getTimeMil()) /
                                   player.skillSleepingTime, 0)  # CD剩余百分比
-                cdRect = (-1, int(sh / 2), int(sw * restpercent), self.cdweight)
+                cdRect = (-1, int(sh / 2), int(sw * restPercent), self.cdweight)
                 pygame.draw.rect(self.frame, self.cdcolor, cdRect)
+
+                # 摆放可冲刺时效果
+                nowTime = Base.getTimeMil()
+                restPercent = 1 - (player.rushSleepTime + player.lastRushTime - nowTime) / player.rushSleepTime
+                r = 10
+                if restPercent > 1:
+                    r = random.randint(0, r + 5) if Configuration.ParticlesShowing else r + 5
+                else:
+                    r = restPercent * r
+                pygame.draw.circle(self.root, self.cdcolor, pygame.mouse.get_pos(), r)
 
                 # 摆放玩家血量
                 livesmessage = ' '.join(["■"] * player.lives)
@@ -142,7 +153,7 @@ class GameScreen:
             pos[1] += Configuration.SH // 2
             self.frame.print(pos)
         else:
-            self.frame.print()
+            self.frame.print((0, 0))
         # 更新文字Frame
         self.textFrame.print()
         # 更新按钮Frame
