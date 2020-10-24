@@ -29,6 +29,7 @@ class UserFacer:
         self.setttingKey = [pygame.K_TAB]
         self.startkey = [pygame.K_RETURN, pygame.K_r]
         self.quitkey = [pygame.K_ESCAPE, pygame.K_q]
+        Configuration.ButtonSize = (self.size[0] + self.size[1]) // 2 // 6
 
     def showstart(self, time, escapetimes, moveper, lives, first, win=False):
         self.running = True
@@ -40,6 +41,7 @@ class UserFacer:
             print(type(e), e)
             Myfont = pygame.font.Font(None, self.fontsize)
         self.root = pygame.display.set_mode(self.size, pygame.RESIZABLE)
+        self.size = Configuration.SW, Configuration.SH = Configuration.ScreenSize = self.root.get_size()
         pygame.display.set_caption(f'Escape_Rect Version:{self.version}' + ('' if first else '——You Lost.'))
         clickRect = self.root.get_rect()
         settingClickRect = pygame.Rect([0, 0, 80, 20])
@@ -71,6 +73,8 @@ class UserFacer:
                     size = max(event.size[0], self.minSize[0]), max(event.size[1], self.minSize[1])
                     self.root = pygame.display.set_mode(size, pygame.RESIZABLE)
                     self.size = Configuration.SW, Configuration.SH = Configuration.ScreenSize = size
+                    Configuration.ButtonSize = (size[0]) // 6
+                    Configuration.ButtonMargin = size[0] // 20
             mouseposx, mouseposy = pygame.mouse.get_pos()
             sw, sh = self.root.get_rect().size
 
@@ -94,7 +98,7 @@ class UserFacer:
                 '' if first else f'EscapeTimes:{escapetimes} Moveper:{moveper:.2f} Lives:{lives}',
                 True, self.fontcolor)
             ow, oh = otext2.get_rect().size
-            if ow - 1:
+            if ow > 1 and oh > 1:
                 text2size = int(sw / 2), int(sw / 2 / ow * oh)
                 text2 = pygame.transform.scale(otext2, text2size)
                 w, h = text2.get_rect().size

@@ -18,8 +18,14 @@ class GameScreen:
         self.background = background
         self.manager = None
         self.root = root
-        self.frame = Base.MyFrame(self.size, self.root)
-        self.textframe = Base.MyFrame(self.size, self.root, alpha=102)
+        self.frame = Base.MyFrame(self.root, self.size)
+        self.textFrame = Base.MyFrame(self.root, self.size, alpha=200)
+        self.buttonFrame = Base.MyFrame(self.root,
+                                        (self.size[0], Configuration.ButtonSize + 2 * Configuration.ButtonMargin),
+                                        (0,
+                                         self.root.get_rect().height - Configuration.ButtonSize - 2 * Configuration.ButtonMargin),
+                                        alpha=70)
+        [Base.Button(self.buttonFrame, c) for c in range(4)]  # 创建按钮
         self.running = False
         self.caption = f'Escape_Rect Version:{Configuration.Version}'
         self.enemy_num = 1
@@ -51,8 +57,13 @@ class GameScreen:
             print(type(e), e)
             Myfont = pygame.font.Font(None, self.fontsize)
         sw, sh = self.frame.get_rect().size
-        playersize = (sw + sh) / 2 // 40
-        player = Player(self.frame, playersize, playersize)
+
+        playerSize = (sw + sh) / 2 // 40
+        moveSpeed = int(sw / 70)  # 根据屏幕宽度调整移动速度
+        player = Player(self.frame, playerSize, playerSize)
+        player.moveSpeed = moveSpeed
+
+        self.manager.buttons.extend(self.buttonFrame.children)
         self.manager.setplayer(player)
         try:
             enemysize = 20  # 敌人大小，数值越大敌人越小
@@ -79,8 +90,6 @@ class GameScreen:
                     self.close()
                     return
 
-                # 显示边框
-                pygame.draw.rect(self.frame, self.boardColor, [0, 0, *self.size], 1)
                 # 摆放技能CD
                 restpercent = max((player.lastSkillTime + player.skillSleepingTime - Base.getTimeMil()) /
                                   player.skillSleepingTime, 0)  # CD剩余百分比
@@ -107,11 +116,14 @@ class GameScreen:
                 text1after = pygame.transform.scale(text1, (int(sw), int(h / sizeratio)))
                 aw = text1after.get_rect().width
                 ah = text1after.get_rect().height
-                self.textframe = self.textframe.clearResize(h=ah)
-                self.textframe.blit(text1after, (int(sw / 2 - aw / 2), 0))
+                self.textFrame = self.textFrame.clearResize(h=ah)
+                self.textFrame.blit(text1after, (int(sw / 2 - aw / 2), 0))
+
+                # 显示边框
+                pygame.draw.rect(self.frame, self.boardColor, [0, 0, *self.size], 1)
 
                 # 刷新页面
-                self.update(player.rect.topleft)
+                self.refresh(player.rect.topleft)
                 self.clock.tick(self.fps)
                 Base.addTime()
         finally:
@@ -119,7 +131,7 @@ class GameScreen:
             self.close()
             return Base.getTimeSec(), countEscapeTimes(), moveper, player.olives, iswinning
 
-    def update(self, playerPos=None):  # 只有在RelShowing成立时，playerPos才会起作用
+    def refresh(self, playerPos=None):  # 只有在RelShowing成立时，playerPos才会起作用
         pygame.display.update()
         self.root.fill(self.background)
 
@@ -132,9 +144,14 @@ class GameScreen:
         else:
             self.frame.print()
         # 更新文字Frame
-        self.textframe.print()
+        self.textFrame.print()
+        # 更新按钮Frame
+        if Configuration.ButtonShowing:
+            self.buttonFrame.printChildren()
+            self.buttonFrame.print()
 
-        self.textframe.fill(self.background)
+        self.buttonFrame.fill(self.background)
+        self.textFrame.fill(self.background)
         self.frame.fill(self.background)
 
     def close(self):

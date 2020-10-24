@@ -55,9 +55,11 @@ class Player(MyChar):
         self.jumpspeed = 3  # 越小越快
         self.jumpmaxtimes = 10  # 空中跳的次数(地面上也有一次)
         self.jumptimes = 0
+        self.lastJumpTime = 0
+        self.jumpingSleepTime = 300  # 跳跃时间间隔（防止连跳）
         self.lives = self.olives = 5  # 生命数
         self.lastHurtTime = 0
-        self.undeadabletime = 5000  # 无敌时间
+        self.undeadabletime = 500000000000000  # 无敌时间 TODO
         self.skillSleepingTime = 7000  # 技能CD
         self.lastSkillTime = -self.skillSleepingTime - 1  # 上次技能施放时间（初始值最小为了在开局能释放技能）
         self.skilleffect = 50  # 技能效果
@@ -68,12 +70,22 @@ class Player(MyChar):
         self.particles = ParticlesGroup()  # 粒子效果
         self.particle_move_length = self.target.get_rect().width / 15  # 粒子移动距离
         self.skill()  # 开局释放技能
+        self.moveSpeed = 5
+
+    def left(self):
+        self.move(-self.moveSpeed, 0)
+
+    def right(self):
+        self.move(self.moveSpeed, 0)
 
     def jump(self):
+        if self.lastJumpTime + self.jumpingSleepTime > Base.getTimeMil():
+            return
         if self.jumptimes == 0:
             self.move(0, -20)
         self.jumptimes += 1
         if self.jumptimes <= self.jumpmaxtimes:
+            self.lastJumpTime = Base.getTimeMil()
             self.jumping = True
             self.jumprest = self.jumpsize
             if self.jumptimes >= 2:  # 显示连跳粒子

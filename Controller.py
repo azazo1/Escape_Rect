@@ -8,6 +8,7 @@ class GroupManager(pygame.sprite.Group):
     def __init__(self, targetscreen):
         super(GroupManager, self).__init__()
         self.lasttime = Base.getTimeMil()
+        self.buttons = []
         self.player = None
         self.moveper = self.omoveper = 2  # 初始移动概率
         self.moveperincrease = 0.05  # 移动概率增长速度
@@ -15,7 +16,6 @@ class GroupManager(pygame.sprite.Group):
         self.target = targetscreen
         self.g = int(targetscreen.get_rect().height / 30)
         self.x, self.y = self.target.get_rect().size
-        self.movespeed = int(self.target.get_rect().width / 70)  # 根据屏幕宽度调整移动速度
         self.rightkey = [pygame.K_d, pygame.K_RIGHT]
         self.leftkey = [pygame.K_a, pygame.K_LEFT]
         self.downkey = [pygame.K_s, pygame.K_DOWN]
@@ -36,25 +36,26 @@ class GroupManager(pygame.sprite.Group):
         for e in events:
             if e.type == pygame.KEYDOWN:
                 self.moveper += self.moveperincrease / 2
-                if e.key in self.jumpkey:  # 跳跃判定
-                    self.player.jump()
+
             if e.type == pygame.MOUSEMOTION or e.type == pygame.MOUSEBUTTONDOWN:
                 self.x, self.y = e.pos
 
-        # 玩家移动
+        for b in self.buttons:  # 检测Button
+            b: Base.Button
+            c = b.command
+            if b.checkPressed():
+                (self.player.left, self.player.right, self.player.jump, self.player.skill)[c]()
+
+        # 检测键盘
         keys = pygame.key.get_pressed()
         if self.checkkey(keys, self.rightkey):
-            self.player.move(self.movespeed, 0)
-
+            self.player.right()
         if self.checkkey(keys, self.leftkey):
-            self.player.move(-self.movespeed, 0)
-
+            self.player.left()
         if self.checkkey(keys, self.downkey):  # 使用技能
             self.player.skill()
-
-        # 向上移动暂时无用
-        # if self.checkkey(keys, self.upkey):
-        #     self.player.move(0, -self.movespeed)
+        if self.checkkey(keys, self.jumpkey):  # 跳跃判定
+            self.player.jump()
 
         # 检测玩家是否移动
         if self.playlastposition != self.player.rect.topleft:
@@ -79,5 +80,5 @@ class GroupManager(pygame.sprite.Group):
             try:
                 if keys[i]:
                     return True
-            except Exception as e:
+            except Exception:
                 pass

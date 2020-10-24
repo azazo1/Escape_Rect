@@ -1,7 +1,6 @@
 # coding=utf-8
 
 import pygame
-import pygame.font as pf
 import Configuration
 
 
@@ -11,7 +10,7 @@ class MyChar(pygame.sprite.Sprite):
         self.rect = pygame.Rect(0, 0, width, height)
         self.target = targetscreen
         self.color = color
-        self.font = pf.Font(Configuration.Font, 15)
+        self.font = pygame.font.Font(Configuration.Font, 15)
 
     def moveto(self, x, y):
         self.rect.left = x
