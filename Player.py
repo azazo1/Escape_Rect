@@ -59,7 +59,7 @@ class Player(MyChar):
         self.jumpingSleepTime = 300  # 跳跃时间间隔（防止连跳）
         self.lives = self.olives = 5  # 生命数
         self.lastHurtTime = 0
-        self.undeadabletime = 500000000000000  # 无敌时间 TODO
+        self.undeadabletime = 500  # 无敌时间
         self.skillSleepingTime = 7000  # 技能CD
         self.lastSkillTime = -self.skillSleepingTime - 1  # 上次技能施放时间（初始值最小为了在开局能释放技能）
         self.skilleffect = 50  # 技能效果

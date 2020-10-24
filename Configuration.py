@@ -1,5 +1,5 @@
 # coding=utf-8
-Version = '0.45.6'
+Version = '0.45.6.1'
 Font = r'consola.ttf'
 RelShowing = False  # 按照角色位置显示屏幕（角色始终在屏幕中间）
 ButtonShowing = True  # 是否显示按钮
