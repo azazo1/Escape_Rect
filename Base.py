@@ -24,8 +24,9 @@ def getTimeSec():  # 返回时间 秒
 
 
 def setting():
-    def getPasswordInput():
-        if Configuration.Invincible:
+    def getPasswordInput(configuration):
+        """configuration: 要修改的Configuration模块中的变量"""
+        if configuration:
             return True
         root = tk.Tk()
         root.title('输入密码')
@@ -42,7 +43,8 @@ def setting():
         Configuration.RelShowing = relShowing.get()
         Configuration.ButtonShowing = buttonShowing.get()
         Configuration.EnemySleepTimeShowing = enemySleepTimeShowing.get()
-        Configuration.Invincible = invincible.get() and getPasswordInput()
+        Configuration.Invincible = invincible.get() and getPasswordInput(Configuration.Invincible)
+        Configuration.NoCD = noCD.get() and getPasswordInput(Configuration.NoCD)
         Configuration.ParticlesShowing = particlesShowing.get()
 
     window = tk.Tk()
@@ -59,8 +61,11 @@ def setting():
     invincible.set(Configuration.Invincible)
     particlesShowing = tk.BooleanVar()
     particlesShowing.set(Configuration.ParticlesShowing)
-
+    noCD = tk.BooleanVar()
+    noCD.set(Configuration.NoCD)
+    
     invincibleButton = tk.Checkbutton(window, text='无敌', onvalue=True, offvalue=False, variable=invincible)
+    noCDButton = tk.Checkbutton(window, text='没有CD', onvalue=True, offvalue=False, variable=noCD)
     buttonShowingButton = tk.Checkbutton(window, text='显示控制按钮', onvalue=True, offvalue=False,
                                          variable=buttonShowing)
     relShowingButton = tk.Checkbutton(window, text='视角随角色移动', onvalue=True, offvalue=False, variable=relShowing)
@@ -71,6 +76,7 @@ def setting():
     confirmButton = tk.Button(window, text='确认', command=confirm)
 
     invincibleButton.pack()
+    noCDButton.pack()
     buttonShowingButton.pack()
     relShowingButton.pack()
     particlesShowingButton.pack()

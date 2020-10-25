@@ -38,10 +38,10 @@ class GroupManager(pygame.sprite.Group):
                 self.moveper += self.moveperincrease / 2
 
             if e.type == pygame.MOUSEBUTTONDOWN:
-                if pygame.mouse.get_pressed()[2]:
-                    targetPos = [ep - tp for tp, ep in zip(self.target.pos, e.pos)]
-                    self.player.rush(targetPos)
-
+                pass
+        if pygame.mouse.get_pressed()[2]:
+            targetPos = [ep - tp for tp, ep in zip(self.target.pos, pygame.mouse.get_pos())]
+            self.player.rush(targetPos)
         for b in self.buttons:  # 检测Button
             b: Base.Button
             c = b.command

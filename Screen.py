@@ -93,18 +93,19 @@ class GameScreen:
 
                 # 摆放技能CD
                 restPercent = max((player.lastSkillTime + player.skillSleepingTime - Base.getTimeMil()) /
-                                  player.skillSleepingTime, 0)  # CD剩余百分比
+                                  player.skillSleepingTime, 0)  if not Configuration.NoCD else 0# CD剩余百分比
                 cdRect = (-1, int(sh / 2), int(sw * restPercent), self.cdweight)
                 pygame.draw.rect(self.frame, self.cdcolor, cdRect)
 
                 # 摆放可冲刺时效果
                 nowTime = Base.getTimeMil()
-                restPercent = 1 - (player.rushSleepTime + player.lastRushTime - nowTime) / player.rushSleepTime
+                restPercent = (player.rushSleepTime + player.lastRushTime - nowTime) / player.rushSleepTime - Configuration.NoCD
+                    # restPercent为剩余百分比，NoCD成立则始终小于零
                 r = 10
-                if restPercent > 1:
+                if restPercent < 0:
                     r = random.randint(0, r + 5) if Configuration.ParticlesShowing else r + 5
                 else:
-                    r = restPercent * r
+                    r = (1 - restPercent) * r
                 pygame.draw.circle(self.root, self.cdcolor, pygame.mouse.get_pos(), r)
 
                 # 摆放玩家血量

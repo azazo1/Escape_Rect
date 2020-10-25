@@ -80,7 +80,7 @@ class Player(MyChar):
     def rush(self, pos: list):  # 用center位置判断冲刺
         self.jumping = False
         nowTime = Base.getTimeMil()
-        if self.lastRushTime + self.rushSleepTime < nowTime:
+        if self.lastRushTime + self.rushSleepTime < nowTime or Configuration.NoCD:
             self.rushing = True
             self.rushArc = self.rect.center, tuple(pos)
             self.lastRushTime = nowTime
@@ -139,16 +139,18 @@ class Player(MyChar):
 
     def skill(self):  # 技能：保护罩
         nowtime = Base.getTimeMil()
-        if nowtime - self.lastSkillTime >= self.skillSleepingTime:  # 时间判定
+        if nowtime - self.lastSkillTime >= self.skillSleepingTime or Configuration.NoCD:  # 时间判定
             self.skillingposition = self.rect.center
             self.lastSkillTime = nowtime
 
     def fall(self, speed):  # 角色位移操作的执行层
         nowTime = Base.getTimeMil()
         if self.rushing:
-            process = ((nowTime - self.lastRushTime) / self.rushingTime) ** (1 / 2)  # 冲刺进度
+            process = max(((nowTime - self.lastRushTime) / self.rushingTime) ** (1 / 2), 0.1)  # 冲刺进度
             start, end = self.rushArc
             nowPos = [(e - s) * process + s for s, e in zip(start, end)]
+            nowPos[0] -= self.rect.width//2
+            nowPos[1] -= self.rect.height//2
             self.moveto(*nowPos)
             self.placeParticles()
             if process >= 1:
