@@ -2,7 +2,10 @@
 <project version="4">
   <component name="ChangeListManager">
     <list default="true" id="a7348c1b-8ea7-40c2-a043-4f344bb8ca25" name="Default Changelist" comment="修复了结果界面时间为零的BUG">
-      <change beforePath="$PROJECT_DIR$/src/GameControl/Controller.py" beforeDir="false" afterPath="$PROJECT_DIR$/src/GameControl/Controller.py" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/.idea/workspace.xml" beforeDir="false" afterPath="$PROJECT_DIR$/.idea/workspace.xml" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/src/Basic/Base.py" beforeDir="false" afterPath="$PROJECT_DIR$/src/Basic/Base.py" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/src/Basic/Configuration.py" beforeDir="false" afterPath="$PROJECT_DIR$/src/Basic/Configuration.py" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/src/Interaction/Screen.py" beforeDir="false" afterPath="$PROJECT_DIR$/src/Interaction/Screen.py" afterDir="false" />
       <change beforePath="$PROJECT_DIR$/src/Interaction/UserFacer.py" beforeDir="false" afterPath="$PROJECT_DIR$/src/Interaction/UserFacer.py" afterDir="false" />
     </list>
     <list id="7aa2f7f5-0dd6-48c6-a45f-1c41ab496297" name="Revert &quot;增加了一键重置窗口大小的功能&quot;" comment="Revert &quot;增加了一键重置窗口大小的功能&quot;&#10;&#10;This reverts commit b38a846f" />
@@ -337,22 +340,22 @@
       <screen x="0" y="0" width="1366" height="738" />
     </state>
     <state x="405" y="222" key="GitRewordDialog/0.0.1366.738@0.0.1366.738" timestamp="1603470642761" />
-    <state width="1255" height="478" key="GridCell.Tab.0.bottom" timestamp="1604106244679">
+    <state width="1345" height="247" key="GridCell.Tab.0.bottom" timestamp="1604110894494">
       <screen x="0" y="0" width="1366" height="738" />
     </state>
-    <state width="1255" height="478" key="GridCell.Tab.0.bottom/0.0.1366.738@0.0.1366.738" timestamp="1604106244679" />
-    <state width="1255" height="478" key="GridCell.Tab.0.center" timestamp="1604106244679">
+    <state width="1345" height="247" key="GridCell.Tab.0.bottom/0.0.1366.738@0.0.1366.738" timestamp="1604110894494" />
+    <state width="1345" height="247" key="GridCell.Tab.0.center" timestamp="1604110894493">
       <screen x="0" y="0" width="1366" height="738" />
     </state>
-    <state width="1255" height="478" key="GridCell.Tab.0.center/0.0.1366.738@0.0.1366.738" timestamp="1604106244679" />
-    <state width="1255" height="478" key="GridCell.Tab.0.left" timestamp="1604106244679">
+    <state width="1345" height="247" key="GridCell.Tab.0.center/0.0.1366.738@0.0.1366.738" timestamp="1604110894493" />
+    <state width="1345" height="247" key="GridCell.Tab.0.left" timestamp="1604110894493">
       <screen x="0" y="0" width="1366" height="738" />
     </state>
-    <state width="1255" height="478" key="GridCell.Tab.0.left/0.0.1366.738@0.0.1366.738" timestamp="1604106244679" />
-    <state width="1255" height="478" key="GridCell.Tab.0.right" timestamp="1604106244679">
+    <state width="1345" height="247" key="GridCell.Tab.0.left/0.0.1366.738@0.0.1366.738" timestamp="1604110894493" />
+    <state width="1345" height="247" key="GridCell.Tab.0.right" timestamp="1604110894493">
       <screen x="0" y="0" width="1366" height="738" />
     </state>
-    <state width="1255" height="478" key="GridCell.Tab.0.right/0.0.1366.738@0.0.1366.738" timestamp="1604106244679" />
+    <state width="1345" height="247" key="GridCell.Tab.0.right/0.0.1366.738@0.0.1366.738" timestamp="1604110894493" />
     <state x="184" y="10" key="SettingsEditor" timestamp="1603449377071">
       <screen x="0" y="0" width="1366" height="738" />
     </state>
@@ -361,10 +364,10 @@
       <screen x="0" y="0" width="1366" height="738" />
     </state>
     <state x="326" y="121" key="Vcs.Push.Dialog.v2/0.0.1366.738@0.0.1366.738" timestamp="1603492911745" />
-    <state x="363" y="192" key="com.intellij.ide.util.TipDialog" timestamp="1604103415381">
+    <state x="363" y="192" key="com.intellij.ide.util.TipDialog" timestamp="1604110123624">
       <screen x="0" y="0" width="1366" height="738" />
     </state>
-    <state x="363" y="192" key="com.intellij.ide.util.TipDialog/0.0.1366.738@0.0.1366.738" timestamp="1604103415381" />
+    <state x="363" y="192" key="com.intellij.ide.util.TipDialog/0.0.1366.738@0.0.1366.738" timestamp="1604110123624" />
     <state x="475" y="285" key="com.intellij.openapi.vcs.update.UpdateOrStatusOptionsDialogupdate-v2" timestamp="1603461281121">
       <screen x="0" y="0" width="1366" height="738" />
     </state>

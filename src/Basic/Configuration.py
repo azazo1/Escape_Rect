@@ -1,9 +1,10 @@
 # coding=utf-8
 
-Version = '0.45.7.9'
+Version = '0.45.7.10'
 Font = r'consola.ttf'
 Password = 'Azazo1Best'  # 启用高级功能需输入的密码
 advanceFeatures = ['NoCD', 'Invincible']  # 高级功能，用来判断是否需要输入密码
+FullScreen = False  # 是否全屏
 RelShowing = False  # 按照角色位置显示屏幕（角色始终在屏幕中间）
 ButtonShowing = True  # 是否显示按钮(Linux显示)
 EnemySleepTimeShowing = True  # 敌人是否显示间隙时间

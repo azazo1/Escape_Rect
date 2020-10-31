@@ -10,6 +10,8 @@ Con = Configuration
 freshedPages = [0]  # 用已显示帧数返回时间
 Con.ButtonShowing = system() != 'Windows'  # (Linux显示)
 
+UserFacer = None
+
 
 def addTime():
     freshedPages[0] += 1
@@ -41,11 +43,13 @@ class Setting:
 
     # noinspection PyAttributeOutsideInit
     def initVars(self):
+        self.FullScreen = tk.BooleanVar()
         self.Invincible = tk.BooleanVar()
         self.ParticlesShowing = tk.BooleanVar()
         self.RelShowing = tk.BooleanVar()
         self.ButtonShowing = tk.BooleanVar()
         self.EnemySleepTimeShowing = tk.BooleanVar()
+        self.FullScreen.set(Con.FullScreen)
         self.RelShowing.set(Con.RelShowing)
         self.ButtonShowing.set(Con.ButtonShowing)
         self.EnemySleepTimeShowing.set(Con.EnemySleepTimeShowing)
@@ -63,19 +67,18 @@ class Setting:
         self.window.title('设置')
         self.window.geometry(f'{Con.MinSize[0]}x{Con.MinSize[1]}+10+10')
 
-        invincibleButton = tk.Checkbutton(self.window, text='无敌', onvalue=True, offvalue=False,
-                                          variable=self.Invincible)
-        noCDButton = tk.Checkbutton(self.window, text='没有CD', onvalue=True, offvalue=False, variable=self.NoCD)
-        buttonShowingButton = tk.Checkbutton(self.window, text='显示控制按钮', onvalue=True, offvalue=False,
-                                             variable=self.ButtonShowing)
-        relShowingButton = tk.Checkbutton(self.window, text='视角随角色移动', onvalue=True, offvalue=False,
-                                          variable=self.RelShowing)
-        particlesShowingButton = tk.Checkbutton(self.window, text='显示粒子与效果', onvalue=True, offvalue=False,
-                                                variable=self.ParticlesShowing)
-        enemySleepTimeShowingButton = tk.Checkbutton(self.window, text='显示每个敌人移动间隙和单次移动时间（毫秒）', onvalue=True, offvalue=False,
+        fullScreenButton = tk.Checkbutton(self.window, text='全屏', variable=self.FullScreen,
+                                          command=UserFacer.fullScreen)
+        invincibleButton = tk.Checkbutton(self.window, text='无敌', variable=self.Invincible)
+        noCDButton = tk.Checkbutton(self.window, text='没有CD', variable=self.NoCD)
+        buttonShowingButton = tk.Checkbutton(self.window, text='显示控制按钮', variable=self.ButtonShowing)
+        relShowingButton = tk.Checkbutton(self.window, text='视角随角色移动', variable=self.RelShowing)
+        particlesShowingButton = tk.Checkbutton(self.window, text='显示粒子与效果', variable=self.ParticlesShowing)
+        enemySleepTimeShowingButton = tk.Checkbutton(self.window, text='显示每个敌人移动间隙和单次移动时间（毫秒）',
                                                      variable=self.EnemySleepTimeShowing)
         confirmButton = tk.Button(self.window, text='确认', command=self.confirm)
 
+        fullScreenButton.pack()
         invincibleButton.pack()
         noCDButton.pack()
         buttonShowingButton.pack()
@@ -147,6 +150,7 @@ class Setting:
         Con.NoCD = self.NoCD.get()
 
     def save(self):
+        Con.FullScreen = self.FullScreen.get()
         Con.EnemySleepTimeShowing = self.EnemySleepTimeShowing.get()
         Con.RelShowing = self.RelShowing.get()
         Con.ButtonShowing = self.ButtonShowing.get()
