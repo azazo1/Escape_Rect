@@ -97,7 +97,7 @@ class Player(MyChar):
         self.jumprest = 0
         self.jumping = False
         self.jumpspeed = 3  # 越小越快
-        self.jumpmaxtimes = 4  # 空中跳的次数(地面上也有一次)
+        self.jumpmaxtimes = 3  # 最大连跳数
         self.jumptimes = 0
         self.lastJumpTime = 0
         self.lastJumpProcess = 0
@@ -105,9 +105,10 @@ class Player(MyChar):
         self.jumpingTime = 300  # 跳跃持续时间
 
     def rush(self, pos: list):  # 用center位置判断冲刺
-        self.jumping = False
         nowTime = Base.getTimeMil()
         if self.lastRushTime + self.rushSleepTime < nowTime or Configuration.NoCD:
+            self.jumptimes  = 0
+            self.jumping = False
             self.rushing = True
             self.rushArc = self.rect.center, tuple(pos)
             self.lastRushTime = nowTime
@@ -123,6 +124,8 @@ class Player(MyChar):
     def jump(self):
         if self.lastJumpTime + self.jumpingSleepTime > Base.getTimeMil():
             return
+        #if self.jumptimes == 0:
+           # self.move(0,-self.target.get_rect().height//5)
         self.jumptimes += 1
         if self.jumptimes <= self.jumpmaxtimes:
             self.lastJumpTime = Base.getTimeMil()
