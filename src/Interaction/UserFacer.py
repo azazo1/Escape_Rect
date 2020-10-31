@@ -154,7 +154,7 @@ class UserFacer:
                 text2pos = (int(sw / 2 - w / 2), int(sh / 2 - h / 2 + text1.get_rect().height))  # 固定式摆法
                 self.root.blit(text2, text2pos)
 
-            textbottom = self.Font.render(['[R] or [RETURN] or [CLICK HERE] to START', "You Win!"][win],
+            textbottom = self.Font.render(['[RETURN] START, [TAB] SETTING', "You Win!"][win],
                                           True, self.fontcolor)
             w, h = textbottom.get_rect().size
             textbottommovedistansex = sw - w
