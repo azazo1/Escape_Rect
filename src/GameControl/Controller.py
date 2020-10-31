@@ -6,6 +6,8 @@ from src.Char import Player, Enemy
 
 
 class GroupManager(pygame.sprite.Group):
+    endProcess = 20  # 胜利Process
+
     def __init__(self, targetscreen):
         super(GroupManager, self).__init__()
         self.lasttime = Base.getTimeMil()
@@ -13,7 +15,6 @@ class GroupManager(pygame.sprite.Group):
         # noinspection PyTypeChecker
         self.player: Player.Player = None
         self.process = 0  # 初始Process
-        self.endProcess = 20  # 胜利Process
         self.Processincrease = 0.05  # Process增长速度
         self.winnerProcess = 35  # 胜利MovePer
         self.target: Base.MyFrame = targetscreen

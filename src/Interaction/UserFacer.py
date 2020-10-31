@@ -1,5 +1,6 @@
 # coding=utf-8
 from src.Basic import Base, Configuration
+from src.GameControl.Controller import GroupManager
 from src.Interaction.Screen import GameScreen
 import pygame
 from random import randint
@@ -146,6 +147,7 @@ class UserFacer:
             # 设置按钮文字
             settingText = self.Font.render('Setting', True, self.fontcolor)
             self.root.blit(settingText, (0, 0))
+            self.settingClickRect = settingText.get_rect()
 
             # 摆放文字
             otext1 = self.Font.render(
@@ -160,7 +162,7 @@ class UserFacer:
 
             # 摆放文字
             otext2 = self.Font.render(
-                '' if first else f'EscapeTimes:{escapetimes} Process:{process:.2f} Lives:{lives}',
+                '' if first else f'EscapeTimes:{escapetimes} Process:{process / GroupManager.endProcess:.2%} Lives:{lives}',
                 True, self.fontcolor)
             ow, oh = otext2.get_rect().size
             if ow > 1 and oh > 1:
@@ -179,7 +181,6 @@ class UserFacer:
             # textbottompos = (int(sw / 2 - w / 2), sh)#固定式摆法
             self.root.blit(textbottom, textbottompos)
             self.clickRect = pygame.Rect(*textbottompos, *textbottom.get_rect().size)
-
             self.update()
 
     def close(self):
