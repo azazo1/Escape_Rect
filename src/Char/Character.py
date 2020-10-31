@@ -10,7 +10,8 @@ class MyChar(pygame.sprite.Sprite):
         self.rect = pygame.Rect(0, 0, width, height)
         self.target = targetscreen
         self.color = color
-        self.font = pygame.font.Font(Configuration.Font, 15)
+        self.font = pygame.font.Font(Configuration.Font,
+                                     int(targetscreen.get_size()[0] / Configuration.FontRelation * 0.5))
 
     def moveto(self, x, y):
         self.rect.left = x

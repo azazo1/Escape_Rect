@@ -57,7 +57,7 @@ class Player(MyChar):
         self.initSkilling()
 
     def initLife(self):
-        self.lives = self.olives = 5  # 生命数
+        self.lives = self.olives = Configuration.Lives  # 生命数
         self.lastHurtTime = 0
         self.undeadabletime = 500  # 无敌时间
 

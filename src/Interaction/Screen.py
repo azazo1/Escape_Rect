@@ -12,11 +12,12 @@ Con = Configuration
 
 
 class GameScreen:
-    def __init__(self, root=None, size=Con.ScreenSize, background=Con.BackGround, fps=Con.FPS):
+    def __init__(self, root=None, size=Con.ScreenSize, background=Con.BackGround, fps=Con.FPS, fullScreen=False):
         Base.clearTime()  # 重置游戏计时
         self.clock = pygame.time.Clock()
         self.fps = fps
         self.size = size
+        self.fullScreen = fullScreen
         self.background = background
         self.manager = None
         self.root = root
@@ -43,7 +44,7 @@ class GameScreen:
         self.root = pygame.display.set_mode(self.root.get_size())  # 防止退出全屏卡住游戏
         Base.Setting()
         self.root = pygame.display.set_mode(self.root.get_size(),  # 重新进入全屏
-                                            pygame.FULLSCREEN if Con.FullScreen else 0)
+                                            pygame.FULLSCREEN if self.fullScreen else 0)
 
     def gameloop(self):
         def countEscapeTimes():
@@ -87,7 +88,9 @@ class GameScreen:
                     if event.type == pygame.QUIT:
                         self.close()
                         return
-                if player.check(self.manager.sprites()):  # 检查玩家是否死亡
+                if player.check(self.manager.sprites()):  # 受伤判定，同时检查玩家是否死亡
+                    self.manager.update()
+                    self.refresh(player.rect.center)
                     self.close()
                     return
 
@@ -136,7 +139,7 @@ class GameScreen:
                 pygame.draw.rect(self.frame, self.boardColor, [0, 0, *self.size], t)
 
                 # 刷新页面
-                self.refresh(player.rect.topleft)
+                self.refresh(player.rect.center)
                 self.clock.tick(self.fps)
                 Base.addTime()
         finally:

@@ -95,10 +95,7 @@ class UserFacer:
                     x, y = event.pos
                     if self.clickRect.x < x < self.clickRect.right:
                         if self.clickRect.y < y < self.clickRect.bottom:
-                            self.root = pygame.display.set_mode(self.root.get_size())
-                            self.startingAnimation()
-                            self.startSize = self.size
-                            self.close()
+                            self.startPlaying()
                             return True
                     if self.settingClickRect.x < x < self.settingClickRect.right:
                         if self.settingClickRect.y < y < self.settingClickRect.bottom:
@@ -107,11 +104,7 @@ class UserFacer:
                     if event.key in self.setttingKey:
                         self.setting()
                     if event.key in self.startkey:
-                        self.resize(self.root.get_size(),
-                                    pygame.FULLSCREEN if Con.FullScreen else 0)  # 开始游戏，将窗口设置为不可变换大小
-                        self.startSize = self.size
-                        self.startingAnimation()
-                        self.close()
+                        self.startPlaying()
                         return True
                     if event.key in self.quitkey:
                         self.close()
@@ -190,19 +183,20 @@ class UserFacer:
             if not self.showMenu(time, escapetimes, process, lives, first=first, win=iswinning):
                 break
             first = 0
-            game = GameScreen(self.root, self.size, fps=self.fps)
+            game = GameScreen(self.root, self.size, fps=self.fps, fullScreen=Con.FullScreen)
             game.enemy_num = self.last_enemy_num = randint(self.min_enemy_num, self.max_enemy_num)
             game.Font = self.Font
             game.fontcolor = self.fontcolor
             time, escapetimes, process, lives, iswinning = game.gameloop()
 
     def fullScreen(self):
-        Con.FullScreen = not Con.FullScreen
-        if Con.FullScreen:
-            csize = pygame.display.list_modes()[0]
-            self.resize(csize, pygame.FULLSCREEN)
-        else:
-            self.resize(Configuration.MinSize, pygame.RESIZABLE)
+        if self.running:
+            Con.FullScreen = not Con.FullScreen
+            if Con.FullScreen:
+                csize = pygame.display.list_modes()[0]
+                self.resize(csize, pygame.FULLSCREEN)
+            else:
+                self.resize(Configuration.MinSize, pygame.RESIZABLE)
 
     def setting(self):
         self.resize(self.root.get_size(), pygame.RESIZABLE)  # 防止退出全屏卡住游戏
@@ -210,6 +204,13 @@ class UserFacer:
         self.resize(pygame.display.list_modes()[0] if Con.FullScreen else self.root.get_size(),
                     # 重新进入全屏
                     pygame.FULLSCREEN if Con.FullScreen else pygame.RESIZABLE)
+
+    def startPlaying(self):
+        self.resize(self.root.get_size(),
+                    pygame.FULLSCREEN if Con.FullScreen else 0)  # 开始游戏，将窗口设置为不可变换大小
+        self.startSize = self.size
+        self.startingAnimation()
+        self.close()
 
 
 if __name__ == '__main__':

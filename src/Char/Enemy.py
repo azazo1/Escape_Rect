@@ -72,7 +72,7 @@ class Enemy(MyChar):
     def update(self, *args, **kwargs):
         self.movingTime = max(-0.04 * Base.getTimeMil() + 2000,
                               150)  # 随时间增加movingTime越小，最小为500
-        super(Enemy, self).update(text=f'{self.sleeptime} {self.movingTime:.0f}' if Configuration.EnemySleepTimeShowing else '')
+        super(Enemy, self).update(text=f'{self.sleeptime} {self.movingTime:.0f}' if Configuration.EnemySleepTimeShowing else ' ')
         if randint(0, 1000) < 30 and (
                 (Base.getTimeMil() - self.lastMoveTime) > self.sleeptime) and not self.moving:
             self.summonPoint()

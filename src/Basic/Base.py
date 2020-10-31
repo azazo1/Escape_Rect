@@ -150,7 +150,7 @@ class Setting:
         Con.NoCD = self.NoCD.get()
 
     def save(self):
-        Con.FullScreen = self.FullScreen.get()
+        # Con.FullScreen = self.FullScreen.get() # 全屏由UserFacer修改
         Con.EnemySleepTimeShowing = self.EnemySleepTimeShowing.get()
         Con.RelShowing = self.RelShowing.get()
         Con.ButtonShowing = self.ButtonShowing.get()
