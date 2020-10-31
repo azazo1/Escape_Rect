@@ -34,7 +34,7 @@ class GameScreen:
         self.enemy_num = 1
         self.Font = None
         self.boardColor = (20, 20, 20)  # 边框颜色
-        self.fontcolor = (255, 0, 0)
+        self.fontcolor = (0, 0, 0)
         self.livescolor = (255, 255, 0)
         self.fontsize = 30
         self.cdweight = 3  # cd条宽
@@ -89,7 +89,7 @@ class GameScreen:
                         self.close()
                         return
                 if player.check(self.manager.sprites()):  # 受伤判定，同时检查玩家是否死亡
-                    self.manager.update()
+                    self.manager.updateCondition()
                     self.refresh(player.rect.center)
                     self.close()
                     return
@@ -111,28 +111,27 @@ class GameScreen:
                     r = (1 - restPercent) * r
                 pygame.draw.circle(self.root, self.cdcolor, pygame.mouse.get_pos(), r)
 
-                # 摆放玩家血量
+                # 更新敌人和玩家状态
+                process, iswinning = self.manager.updateCondition()
+                if iswinning:
+                    raise Exception("Winning!")
+
+                # 计算信息
                 livesmessage = ' '.join(["■"] * player.lives)
+                message = f'Static:{Base.getTimeSec() - self.manager.playerlastmovetime / 1000:.2f} Enemies:{self.enemy_num} Escapes:{countEscapeTimes()} Second:{Base.getTimeSec():.1f} Process:{process / self.manager.endProcess:.2%}'
+
+                # 摆放玩家血量
                 textlives = self.Font.render(livesmessage, True, self.livescolor)
                 w, h = textlives.get_rect().size
                 self.frame.blit(textlives, (int(sw / 2 - w / 2), int(sh / 2 - h / 2)))
 
-                # 更新敌人和玩家状态
-                process, iswinning = self.manager.update()
-                if iswinning:
-                    raise Exception("Winning!")
-
                 # 摆放顶部文字
-                text1 = self.Font.render(
-                    f'Static:{Base.getTimeSec() - self.manager.playerlastmovetime / 1000:.2f} Enemies:{self.enemy_num} Escapes:{countEscapeTimes()} Second:{Base.getTimeSec():.1f} Process:{process / self.manager.endProcess:.2%}',
-                    True, self.fontcolor)
+                text1 = self.Font.render(message, True, self.fontcolor)
                 w, h = text1.get_rect().size
                 sizeratio = w / sw
                 text1after = pygame.transform.scale(text1, (int(sw), int(h / sizeratio)))
                 aw = text1after.get_rect().width
-                ah = text1after.get_rect().height
-                self.textFrame = self.textFrame.clearResize(h=ah)
-                self.textFrame.blit(text1after, (int(sw / 2 - aw / 2), 0))
+                self.root.blit(text1after, (int(sw / 2 - aw / 2), 0))
 
                 # 显示边框
                 t = Con.ScreenBorderThick
@@ -151,6 +150,8 @@ class GameScreen:
         pygame.display.update()
         self.root.fill(self.background)
 
+        # 更新manager内的角色
+        self.manager.refresh()
         # 更新Frame
         if Con.RelShowing and playerPos:
             pos = [-i for i in playerPos]
@@ -159,8 +160,6 @@ class GameScreen:
             self.frame.print(pos)
         else:
             self.frame.print((0, 0))
-        # 更新文字Frame
-        self.textFrame.print()
         # 更新按钮Frame
         if Con.ButtonShowing:
             self.buttonFrame.printChildren()

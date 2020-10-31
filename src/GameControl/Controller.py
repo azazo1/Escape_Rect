@@ -31,7 +31,7 @@ class GroupManager(pygame.sprite.Group):
     def setplayer(self, player):
         self.player = player
 
-    def update(self, *args, **kwargs):
+    def updateCondition(self, *args, **kwargs):
         nowtime = Base.getTimeMil()
         if nowtime - self.lasttime > 1000:  # 增长process
             self.process += self.Processincrease
@@ -53,7 +53,7 @@ class GroupManager(pygame.sprite.Group):
             self.player.skill()
         if self.checkkey(keys, self.jumpkey):  # 跳跃判定
             self.player.jump()
-        if pygame.mouse.get_pressed()[2]:  # 冲刺判定
+        if pygame.mouse.get_pressed(3)[2]:  # 冲刺判定
             targetPos = [ep - tp for tp, ep in zip(self.target.pos, pygame.mouse.get_pos())]
             self.player.rush(targetPos)
 
@@ -71,11 +71,12 @@ class GroupManager(pygame.sprite.Group):
                 sprite: Enemy.Enemy
                 if not sprite.moving:
                     sprite.summonPoint(True)
+        return self.process, self.process > self.winnerProcess
 
+    def refresh(self):
         # 刷新
         self.player.update()
         super(GroupManager, self).update()
-        return self.process, self.process > self.winnerProcess
 
     def checkkey(self, keys, direct):
         for i in direct:

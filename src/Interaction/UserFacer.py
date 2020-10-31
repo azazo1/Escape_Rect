@@ -135,32 +135,25 @@ class UserFacer:
             otext1 = self.Font.render(
                 f'Escape_Rect Version:{self.version}——Author:azazo1' if first else f'Enemies:{self.last_enemy_num} Seconds:{time:.2f} Size:{self.startSize}',
                 True, self.fontcolor)
-            ow, oh = otext1.get_rect().size
-            text1size = int(sw / 2), int(sw / 2 / ow * oh)
-            text1 = pygame.transform.scale(otext1, text1size)
-            w, h = text1.get_rect().size
+            w, h = otext1.get_rect().size
             text1pos = (int(sw / 2 - w / 2), int(sh / 2 - h / 2))  # 固定式摆法
-            self.root.blit(text1, text1pos)
+            self.root.blit(otext1, text1pos)
 
             # 摆放文字
             otext2 = self.Font.render(
                 '' if first else f'EscapeTimes:{escapetimes} Process:{process / GroupManager.endProcess:.2%} Lives:{lives}',
                 True, self.fontcolor)
-            ow, oh = otext2.get_rect().size
-            if ow > 1 and oh > 1:
-                text2size = int(sw / 2), int(sw / 2 / ow * oh)
-                text2 = pygame.transform.scale(otext2, text2size)
-                w, h = text2.get_rect().size
-                text2pos = (int(sw / 2 - w / 2), int(sh / 2 - h / 2 + text1.get_rect().height))  # 固定式摆法
-                self.root.blit(text2, text2pos)
+            w, h = otext2.get_rect().size
+            if w > 1 and h > 1:
+                text2pos = (int(sw / 2 - w / 2), int(sh / 2 - h / 2 + otext1.get_rect().height))  # 固定式摆法
+                self.root.blit(otext2, text2pos)
 
+            # 摆放底部文字
             textbottom = self.Font.render(['[RETURN] START, [TAB] SETTING', "You Win!"][win],
                                           True, self.fontcolor)
             w, h = textbottom.get_rect().size
             textbottommovedistansex = sw - w
-            textbottommovedistansey = sh - h
             textbottompos = (int(textbottommovedistansex * mouseposx / sw), sh - textbottom.get_rect().height)  # 浮动式摆法
-            # textbottompos = (int(sw / 2 - w / 2), sh)#固定式摆法
             self.root.blit(textbottom, textbottompos)
             self.clickRect = pygame.Rect(*textbottompos, *textbottom.get_rect().size)
             self.update()
