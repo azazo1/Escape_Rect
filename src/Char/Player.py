@@ -1,7 +1,7 @@
 # coding=utf-8
 import random
 
-from src.Basic import Base, Configuration
+from src.Basic.Base import *
 import pygame
 
 from src.Char.Character import MyChar
@@ -105,7 +105,7 @@ class Player(MyChar):
         self.jumpingTime = 300  # 跳跃持续时间
 
     def rush(self, pos: list):  # 用center位置判断冲刺
-        nowTime = Base.getTimeMil()
+        nowTime = getTimeMil()
         if self.lastRushTime + self.rushSleepTime < nowTime or Configuration.NoCD:
             self.jumptimes  = 0
             self.jumping = False
@@ -114,21 +114,21 @@ class Player(MyChar):
             self.lastRushTime = nowTime
 
     def left(self):
-        moveRange = int(self.moveSpeed * Base.getTimeMilPerPage() / 1000)
+        moveRange = int(self.moveSpeed * getTimeMilPerPage() / 1000)
         self.move(-moveRange, 0)
 
     def right(self):
-        moveRange = int(self.moveSpeed * Base.getTimeMilPerPage() / 1000)
+        moveRange = int(self.moveSpeed * getTimeMilPerPage() / 1000)
         self.move(moveRange, 0)
 
     def jump(self):
-        if self.lastJumpTime + self.jumpingSleepTime > Base.getTimeMil():
+        if self.lastJumpTime + self.jumpingSleepTime > getTimeMil():
             return
         #if self.jumptimes == 0:
            # self.move(0,-self.target.get_rect().height//5)
         self.jumptimes += 1
         if self.jumptimes <= self.jumpmaxtimes:
-            self.lastJumpTime = Base.getTimeMil()
+            self.lastJumpTime = getTimeMil()
             self.jumping = True
             self.jumprest = self.jumpSize
             if self.jumptimes >= 2:  # 显示连跳粒子
@@ -168,14 +168,14 @@ class Player(MyChar):
         self.rect.bottom = min(self.rect.bottom, sh)
 
     def skill(self):  # 技能：保护罩
-        nowtime = Base.getTimeMil()
+        nowtime = getTimeMil()
         if nowtime - self.lastSkillTime >= self.skillSleepingTime or Configuration.NoCD:  # 时间判定
             self.skillingposition = self.rect.center
             self.lastSkillTime = nowtime
 
     def fall(self):  # 角色位移操作的执行层
         """speed单位为 px/s"""
-        nowTime = Base.getTimeMil()
+        nowTime = getTimeMil()
         if self.rushing:
             process = max(((nowTime - self.lastRushTime) / self.rushingTime) ** (1 / 2), 0.1)  # 冲刺进度
             start, end = self.rushArc
@@ -203,11 +203,11 @@ class Player(MyChar):
         self.lastFallTime = nowTime
 
     def check(self, sprites):
-        nowtime = Base.getTimeMil()
+        nowtime = getTimeMil()
         if self.lastSkillTime + self.skilllastedtime <= nowtime:  # 解除保护罩
             self.skillingposition = -self.skillrange, -self.skillrange
         for sprite in sprites:
-            nowtime = Base.getTimeMil()
+            nowtime = getTimeMil()
             if sprite.rect.left < self.rect.midtop[0] < sprite.rect.right and \
                     sprite.rect.top < self.rect.midtop[1] < sprite.rect.bottom and \
                     nowtime >= self.lastHurtTime + self.undeadabletime:

@@ -1,7 +1,5 @@
 # coding=utf-8
-
-import pygame
-from src.Basic import Configuration
+from src.Basic.Base import *
 
 
 class MyChar(pygame.sprite.Sprite):

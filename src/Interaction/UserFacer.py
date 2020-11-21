@@ -1,11 +1,11 @@
 # coding=utf-8
-from src.Basic import Base, Configuration
+from src.Basic.Base import *
+import src.Basic.Base as Base
 from src.GameControl.Controller import GroupManager
 from src.Interaction.Screen import GameScreen
-import pygame
 from random import randint
+from src.Interaction.ProgressDrawer import Loader
 
-Con = Configuration
 pygame.init()
 
 
@@ -13,7 +13,7 @@ class UserFacer:
     version = Configuration.Version
 
     def __init__(self):
-        Base.clearTime()
+        clearTime()
         Base.UserFacer = self
         self.clock = pygame.time.Clock()
         self.root = None
@@ -23,54 +23,37 @@ class UserFacer:
         self.fontSize = lambda: int(self.root.get_rect().width // Con.FontRelation)  # 根据屏幕大小更改字体大小
         self.defaultFontSize = 20
         # noinspection PyTypeChecker
-        self.Font: pygame.font.Font = None
-        self.fontcolor = Configuration.FontColor
+        self.Font: pygame.font.Font = getFont(Font, self.defaultFontSize)
+        self.fontColor = Configuration.FontColor
         self.background = Configuration.BackGround
         self.running = False
         self.min_enemy_num = Configuration.LeastEnemy  # 最小敌人数
         self.max_enemy_num = Configuration.MostEnemy  # 最大敌人数
         self.last_enemy_num = 0  # 可忽视
-        self.setttingKey = [pygame.K_TAB]
-        self.startkey = [pygame.K_RETURN, pygame.K_r]
-        self.quitkey = [pygame.K_ESCAPE, pygame.K_q]
-        self.fullkey = [pygame.K_F11]
+        self.settingKey = [pygame.K_TAB]
+        self.startKey = [pygame.K_RETURN, pygame.K_r]
+        self.quitKey = [pygame.K_ESCAPE, pygame.K_q]
+        self.fullKey = [pygame.K_F11]
         Configuration.ButtonSize = (self.size[0] + self.size[1]) // 2 // 6
         self.clickRect = pygame.Rect(
             [0, int(self.size[1] - 0.06 * self.size[1]), self.size[0], int(0.06 * self.size[1])])  # 点击开始游戏区域
         self.settingClickRect = pygame.Rect([0, 0, 80, 20])  # 点击设置区域
-        try:
-            self.Font = pygame.font.Font(Con.Font, self.defaultFontSize)
-        except Exception as e:
-            print(type(e), e)
-            self.font = None  # 更改后重置窗口不会尝试错误路径
-            self.Font = pygame.font.Font(None, self.defaultFontSize)
 
     def resize(self, size, *args):
         self.root = pygame.display.set_mode(size, *args)
         self.size = Configuration.SW, Configuration.SH = Configuration.ScreenSize = size
         Configuration.ButtonSize = (size[0]) // 6
         Configuration.ButtonMargin = size[0] // 20
-        self.Font = pygame.font.Font(Con.Font, self.fontSize())
+        self.Font = getFont(Font, self.fontSize())
 
     def startingAnimation(self):
+        loader = Loader(self.root, int(min(self.size) * 0.5), CenterPosition,twoPoint=True)
         lastingTime = 500
-        startTime = Base.getTimeMil()
-        sw, sh = self.size
-        startW, startH = self.clickRect.size
-        targetH = targetW = (sw + sh) / 2 // 40
-        startX, startY = self.clickRect.center
-        targetX, targetY = int(sw / 2), int(sh - targetW / 2)
-        while lastingTime + startTime >= Base.getTimeMil():
-            nowTime = Base.getTimeMil()
-            self.clickRect.center = (
-                int(startX + (targetX - startX) * (nowTime - startTime) / lastingTime),
-                int(startY)
-            )
-            self.clickRect.height, self.clickRect.width = (
-                int(startH),
-                int(startW + (targetW - startW) * (nowTime - startTime) / lastingTime)
-            )
-            pygame.draw.rect(self.root, (255, 0, 0), self.clickRect)
+        startTime = getTimeMil()
+        while lastingTime + startTime >= getTimeMil():
+            nowTime = getTimeMil()
+            loader.percent = 1 - (lastingTime + startTime - nowTime) / lastingTime
+            loader.flush()
             self.update()
         pygame.event.clear()
 
@@ -78,7 +61,7 @@ class UserFacer:
         pygame.display.update()
         self.root.fill(self.background)
         self.clock.tick(self.fps)
-        Base.addTime()
+        addTime()
 
     def showMenu(self, time, escapetimes, process, lives, first, win=False):
         self.running = True
@@ -101,15 +84,15 @@ class UserFacer:
                         if self.settingClickRect.y < y < self.settingClickRect.bottom:
                             self.setting()
                 if event.type == pygame.KEYDOWN:
-                    if event.key in self.setttingKey:
+                    if event.key in self.settingKey:
                         self.setting()
-                    if event.key in self.startkey:
+                    if event.key in self.startKey:
                         self.startPlaying()
                         return True
-                    if event.key in self.quitkey:
+                    if event.key in self.quitKey:
                         self.close()
                         return False
-                    if event.key in self.fullkey:
+                    if event.key in self.fullKey:
                         self.fullScreen()
                 if event.type == pygame.VIDEORESIZE:
                     if Con.FullScreen:  # 全屏不缩放
@@ -127,14 +110,14 @@ class UserFacer:
 
             pygame.draw.rect(self.root, (255, 0, 0), self.clickRect)
             # 设置按钮文字
-            settingText = self.Font.render('Setting', True, self.fontcolor)
+            settingText = self.Font.render('Setting', True, self.fontColor)
             self.root.blit(settingText, (0, 0))
             self.settingClickRect = settingText.get_rect()
 
             # 摆放文字
             otext1 = self.Font.render(
                 f'Escape_Rect Version:{self.version}——Author:azazo1' if first else f'Enemies:{self.last_enemy_num} Seconds:{time:.2f} Size:{self.startSize}',
-                True, self.fontcolor)
+                True, self.fontColor)
             w, h = otext1.get_rect().size
             text1pos = (int(sw / 2 - w / 2), int(sh / 2 - h / 2))  # 固定式摆法
             self.root.blit(otext1, text1pos)
@@ -142,7 +125,7 @@ class UserFacer:
             # 摆放文字
             otext2 = self.Font.render(
                 '' if first else f'EscapeTimes:{escapetimes} Process:{process / GroupManager.endProcess:.2%} Lives:{lives}',
-                True, self.fontcolor)
+                True, self.fontColor)
             w, h = otext2.get_rect().size
             if w > 1 and h > 1:
                 text2pos = (int(sw / 2 - w / 2), int(sh / 2 - h / 2 + otext1.get_rect().height))  # 固定式摆法
@@ -150,7 +133,7 @@ class UserFacer:
 
             # 摆放底部文字
             textbottom = self.Font.render(['[RETURN] START, [TAB] SETTING', "You Win!"][win],
-                                          True, self.fontcolor)
+                                          True, self.fontColor)
             w, h = textbottom.get_rect().size
             textbottommovedistansex = sw - w
             textbottompos = (int(textbottommovedistansex * mouseposx / sw), sh - textbottom.get_rect().height)  # 浮动式摆法
@@ -179,7 +162,7 @@ class UserFacer:
             game = GameScreen(self.root, self.size, fps=self.fps, fullScreen=Con.FullScreen)
             game.enemy_num = self.last_enemy_num = randint(self.min_enemy_num, self.max_enemy_num)
             game.Font = self.Font
-            game.fontcolor = self.fontcolor
+            game.fontcolor = self.fontColor
             time, escapetimes, process, lives, iswinning = game.gameloop()
 
     def fullScreen(self):

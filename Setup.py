@@ -1,19 +1,22 @@
-import sys
+# coding=utf-8
 import os
-answer = ''
-os.system('@echo off')
-for i in sys.path:
-    if i and '.' not in i:
-        this = ''
-        os.chdir(i)
-        print(i)
-        this += os.popen('python -m pip install --upgrade pip -i https://pypi.douban.com/simple').read()
-        this += os.popen('python -m pip install pygame pygame-pgu -i https://pypi.douban.com/simple').read()
-        this += os.popen('python -m pip install pygame pygame-pgu -i https://pypi.douban.com/simple --upgrade').read()
-        answer += this
-        if '不是' not in this:
-            print(this)
-        if 'Requirement already' in answer:
-            break
-print('OK') 
+import sys
+
+needs = ['pillow', 'bezier', 'pygame', 'pygame-pgu']
+
+logName = 'Logs.txt'
+print('Start')
+state = 1
+for p in sys.path:
+    for module in needs:
+        print(f'Installing:{module}')
+        os.chdir(p)
+        state = (os.system(f'python -m '
+                           f'pip install {module} '
+                           f'-i https://pypi.douban.com/simple '
+                           f'>>{logName}')
+                 and state)
+    if state == 0:  # 成功安装
+        break
+print('Over')
 os.system('pause')

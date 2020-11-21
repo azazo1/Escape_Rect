@@ -1,10 +1,8 @@
 # coding=utf-8
 import math
-import random
 from random import randint
-
-from src.Basic import Base, Configuration
 from src.Char.Character import MyChar
+from src.Basic.Base import *
 
 
 class Enemy(MyChar):
@@ -16,7 +14,7 @@ class Enemy(MyChar):
                         * 0.2  # 随机移动到玩家的最大距离（越大玩家越安全）
         self.movetimes = 0
         self.maxSleepTime = 1000  # 移动最大休息时间
-        self.sleeptime = random.randint(0, self.maxSleepTime)
+        self.sleeptime = randint(0, self.maxSleepTime)
         self.lives = 10  # 生命数
         self.moving = False
         self.lastMoveTime = 0
@@ -67,14 +65,15 @@ class Enemy(MyChar):
     def smoothTo(self, x, y):
         self.moving = True
         self.moveArc = self.rect.center, (x, y)
-        self.lastMoveTime = Base.getTimeMil()
+        self.lastMoveTime = getTimeMil()
 
     def update(self, *args, **kwargs):
-        self.movingTime = max(-0.04 * Base.getTimeMil() + 2000,
+        self.movingTime = max(-0.04 * getTimeMil() + 2000,
                               150)  # 随时间增加movingTime越小，最小为500
-        super(Enemy, self).update(text=f'{self.sleeptime} {self.movingTime:.0f}' if Configuration.EnemySleepTimeShowing else ' ')
+        super(Enemy, self).update(
+            text=f'{self.sleeptime} {self.movingTime:.0f}' if Configuration.EnemySleepTimeShowing else ' ')
         if randint(0, 1000) < 30 and (
-                (Base.getTimeMil() - self.lastMoveTime) > self.sleeptime) and not self.moving:
+                (getTimeMil() - self.lastMoveTime) > self.sleeptime) and not self.moving:
             self.summonPoint()
             self.movetimes += 1
         else:
@@ -83,7 +82,7 @@ class Enemy(MyChar):
 
     def smoothmove(self):
         if self.moving:
-            nowTime = Base.getTimeMil()
+            nowTime = getTimeMil()
             process = max(((nowTime - self.lastMoveTime) / self.movingTime) ** 0.3, 0.01)  # 冲刺进度
             start, end = self.moveArc
             # 计算坐标

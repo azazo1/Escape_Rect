@@ -1,10 +1,12 @@
 # coding=utf-8
 import time
+import traceback
 from platform import system
 import pygame
+from math import pi
 import tkinter as tk
-import pygame.font as pf
 from src.Basic import Configuration
+from src.Basic.Configuration import *  # 在其他地方有用到
 
 Con = Configuration
 freshedPages = [0]  # 用已显示帧数返回时间
@@ -31,6 +33,34 @@ def getTimeMil():  # 返回时间 毫秒
 
 def getTimeSec():  # 返回时间 秒
     return freshedPages[0] / Con.FPS
+
+
+def getFont(family, size):
+    try:
+        get = pygame.font.Font(family, size)
+    except Exception:
+        traceback.print_exc()
+        get = pygame.font.Font(None, int(size))
+    return get
+
+
+def angleToFloat(angle):
+    return angle * pi / 180
+
+
+def printToCenter(target: pygame.Surface, src: pygame.Surface, deltaX=0, deltaY=0):
+    """
+    将src打印到target中心
+    :param target:
+    :param src:
+    :param deltaX: X偏移量
+    :param deltaY: Y偏移量
+    :return:
+    """
+    w1, h1 = target.get_size()
+    w2, h2 = src.get_size()
+    pos = int(w1 / 2 - w2 / 2 + deltaX), int(h1 / 2 - h2 / 2 + deltaY)
+    target.blit(src, pos)
 
 
 class Setting:
@@ -96,7 +126,7 @@ class Setting:
     def checkSame(self, *configurations):
         """判断参数中的变量（被选中）是否和Configuration中的变量完全一样"""
         for configuration in configurations:
-            Conc = Con.__getattr__(configuration)
+            Conc = Con.getAttr(configuration)
             selfc = self.__getattr__(configuration).get()
             if Conc != selfc and selfc:
                 return False  # 有不同且被选中
@@ -241,7 +271,7 @@ class Button(MyWidget):
     def checkPressed(self):
         if not Con.ButtonShowing:
             return
-        if pygame.mouse.get_pressed()[0]:
+        if pygame.mouse.get_pressed(3)[0]:
             return self.checkOver()
 
     def checkOver(self):  # 检查鼠标是否悬在按钮上

@@ -1,9 +1,7 @@
 # coding=utf-8
 import random
 import sys
-import traceback
-import pygame
-from src.Basic import Base, Configuration
+from src.Basic.Base import *
 from src.Char.Enemy import Enemy
 from src.Char.Player import Player
 from src.GameControl import Controller
@@ -13,22 +11,22 @@ Con = Configuration
 
 class GameScreen:
     def __init__(self, root=None, size=Con.ScreenSize, background=Con.BackGround, fps=Con.FPS, fullScreen=False):
-        Base.clearTime()  # 重置游戏计时
+        clearTime()  # 重置游戏计时
         self.clock = pygame.time.Clock()
         self.fps = fps
         self.size = size
         self.fullScreen = fullScreen
         self.background = background
-        self.manager = None
+        self.manager: Controller.GroupManager = None
         self.root = root
-        self.frame = Base.MyFrame(self.root, self.size)
-        self.textFrame = Base.MyFrame(self.root, self.size, alpha=200)
-        self.buttonFrame = Base.MyFrame(self.root,
-                                        (self.size[0], Con.ButtonSize + 2 * Con.ButtonMargin),
-                                        (0,
-                                         self.root.get_rect().height - Con.ButtonSize - 2 * Con.ButtonMargin),
-                                        alpha=70)
-        [Base.Button(self.buttonFrame, c) for c in range(4)]  # 创建按钮
+        self.frame = MyFrame(self.root, self.size)
+        self.textFrame = MyFrame(self.root, self.size, alpha=200)
+        self.buttonFrame = MyFrame(self.root,
+                                   (self.size[0], Con.ButtonSize + 2 * Con.ButtonMargin),
+                                   (0,
+                                    self.root.get_rect().height - Con.ButtonSize - 2 * Con.ButtonMargin),
+                                   alpha=70)
+        [Button(self.buttonFrame, c) for c in range(4)]  # 创建按钮
         self.running = False
         self.caption = f'Escape_Rect Version:{Con.Version}'
         self.enemy_num = 1
@@ -42,7 +40,7 @@ class GameScreen:
 
     def setting(self):
         self.root = pygame.display.set_mode(self.root.get_size())  # 防止退出全屏卡住游戏
-        Base.Setting()
+        Setting()
         self.root = pygame.display.set_mode(self.root.get_size(),  # 重新进入全屏
                                             pygame.FULLSCREEN if self.fullScreen else 0)
 
@@ -72,9 +70,9 @@ class GameScreen:
             screensize = (sw + sh) // 2
             # 创建敌人
             for i in range(self.enemy_num):
-                enemy = Enemy(self.frame, screensize / enemysize, screensize / enemysize)
-                self.manager.add(enemy)
-                enemies.append(enemy)
+                one_enemy = Enemy(self.frame, screensize / enemysize, screensize / enemysize)
+                self.manager.add(one_enemy)
+                enemies.append(one_enemy)
 
             while self.running:
                 events = pygame.event.get()
@@ -90,18 +88,18 @@ class GameScreen:
                         return
                 if player.check(self.manager.sprites()):  # 受伤判定，同时检查玩家是否死亡
                     self.manager.updateCondition()
-                    self.refresh(player.rect.center)
+                    self.flush(player.rect.center)
                     self.close()
                     return
 
                 # 摆放技能CD
-                restPercent = max((player.lastSkillTime + player.skillSleepingTime - Base.getTimeMil()) /
+                restPercent = max((player.lastSkillTime + player.skillSleepingTime - getTimeMil()) /
                                   player.skillSleepingTime, 0) if not Con.NoCD else 0  # CD剩余百分比
                 cdRect = (-1, int(sh / 2), int(sw * restPercent), self.cdweight)
                 pygame.draw.rect(self.frame, self.cdcolor, cdRect)
 
                 # 摆放可冲刺时效果
-                nowTime = Base.getTimeMil()
+                nowTime = getTimeMil()
                 restPercent = (player.rushSleepTime + player.lastRushTime - nowTime) / player.rushSleepTime - Con.NoCD
                 # restPercent为剩余百分比，NoCD成立则始终小于零
                 r = 10
@@ -118,7 +116,7 @@ class GameScreen:
 
                 # 计算信息
                 livesmessage = ' '.join(["■"] * player.lives)
-                message = f'Static:{Base.getTimeSec() - self.manager.playerlastmovetime / 1000:.2f} Enemies:{self.enemy_num} Escapes:{countEscapeTimes()} Second:{Base.getTimeSec():.1f} Process:{process / self.manager.endProcess:.2%}'
+                message = f'Static:{getTimeSec() - self.manager.playerlastmovetime / 1000:.2f} Enemies:{self.enemy_num} Escapes:{countEscapeTimes()} Second:{getTimeSec():.1f} Process:{process / self.manager.endProcess:.2%}'
 
                 # 摆放玩家血量
                 textlives = self.Font.render(livesmessage, True, self.livescolor)
@@ -138,20 +136,20 @@ class GameScreen:
                 pygame.draw.rect(self.frame, self.boardColor, [0, 0, *self.size], t)
 
                 # 刷新页面
-                self.refresh(player.rect.center)
+                self.flush(player.rect.center)
                 self.clock.tick(self.fps)
-                Base.addTime()
+                addTime()
         finally:
             traceback.print_exc(file=sys.stderr)
             self.close()
-            return Base.getTimeSec(), countEscapeTimes(), process, player.olives, iswinning
+            return getTimeSec(), countEscapeTimes(), process, player.olives, iswinning
 
-    def refresh(self, playerPos=None):  # 只有在RelShowing成立时，playerPos才会起作用
+    def flush(self, playerPos=None):  # 只有在RelShowing成立时，playerPos才会起作用
         pygame.display.update()
         self.root.fill(self.background)
 
         # 更新manager内的角色
-        self.manager.refresh()
+        self.manager.flush()
         # 更新Frame
         if Con.RelShowing and playerPos:
             pos = [-i for i in playerPos]

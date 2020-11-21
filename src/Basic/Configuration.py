@@ -1,6 +1,6 @@
 # coding=utf-8
 
-Version = '0.45.7.10'
+Version = '0.45.8'
 Font = r'consola.ttf'
 Password = 'Azazo1Best'  # 启用高级功能需输入的密码
 advanceFeatures = ['NoCD', 'Invincible']  # 高级功能，用来判断是否需要输入密码
@@ -24,9 +24,11 @@ BackGround = (210, 105, 30)  # 背景颜色
 ButtonColor = (70, 70, 70)  # 按钮颜色
 ButtonBorderColor = (50, 50, 50)  # 按钮边框颜色
 FontColor = (5, 5, 5)  # 字体颜色
+ProgressBarColor = (255, 0, 0)  # 加载条颜色
 FontRelation = 640 / 20  # 屏幕宽与字体大小比值
 FPS = 60  # 帧率其他帧率可能会有问题
+CenterPosition = 'center'  # 用来指示将元素打印在中间
 
 
-def __getattr__(name):
+def getAttr(name):
     return eval(name)
