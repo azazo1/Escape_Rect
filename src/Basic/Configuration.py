@@ -1,7 +1,12 @@
 # coding=utf-8
 
-Version = '0.45.8'
-Font = r'consola.ttf'
+Version = '0.46'
+Font = r'Resource/consola.ttf'
+IfSound = True
+RushSound = r'Resource/rush.wav'
+JumpSound = r'Resource/jump.wav'
+HurtSound = r'Resource/hurt.wav'
+DeadSound = r'Resource/dead.wav'
 Password = 'Azazo1Best'  # 启用高级功能需输入的密码
 advanceFeatures = ['NoCD', 'Invincible']  # 高级功能，用来判断是否需要输入密码
 FullScreen = False  # 是否全屏

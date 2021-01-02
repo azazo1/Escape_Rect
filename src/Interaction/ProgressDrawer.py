@@ -18,7 +18,7 @@ class Loader:
         self.size = (size, size)
         self.surfaceFrame = pygame.Surface(self.size)
         self.pos = pos
-        self.font = getFont(Font, size // 5)
+        self.font = getFont(Con.Font, size // 5)
         self.thick = thick or size // 20
         self.twoPoint = twoPoint
         self.bezier_line = Curve(((.0, .15, .31, 1.0), (.0, .75, .86, 1.0)), 3)
@@ -44,13 +44,13 @@ class Loader:
     def flush(self, screen=None):
         if screen:
             self.screen = screen
-        self.surfaceFrame.fill(BackGround)
+        self.surfaceFrame.fill(Con.BackGround)
         start, end = self.generateAngle()
-        pygame.draw.arc(self.surfaceFrame, ProgressBarColor, (*(0, 0), *self.size),
+        pygame.draw.arc(self.surfaceFrame, Con.ProgressBarColor, (*(0, 0), *self.size),
                         start, end, width=self.thick)
-        text = self.font.render(f'{self.percent:.2%}', True, FontColor)
+        text = self.font.render(f'{self.percent:.2%}', True, Con.FontColor)
         printToCenter(self.surfaceFrame, text)
-        if self.pos == CenterPosition:
+        if self.pos == Con.CenterPosition:
             printToCenter(self.screen, self.surfaceFrame)
         else:
             self.screen.blit(self.surfaceFrame, self.pos)

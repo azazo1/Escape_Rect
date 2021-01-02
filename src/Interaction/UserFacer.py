@@ -14,7 +14,7 @@ class UserFacer:
 
     def __init__(self):
         clearTime()
-        Base.UserFacer = self
+        Base.UserFacerOfNow = self
         self.clock = pygame.time.Clock()
         self.root = None
         self.size = self.startSize = Configuration.ScreenSize
@@ -23,7 +23,7 @@ class UserFacer:
         self.fontSize = lambda: int(self.root.get_rect().width // Con.FontRelation)  # 根据屏幕大小更改字体大小
         self.defaultFontSize = 20
         # noinspection PyTypeChecker
-        self.Font: pygame.font.Font = getFont(Font, self.defaultFontSize)
+        self.Font: pygame.font.Font = getFont(Con.Font, self.defaultFontSize)
         self.fontColor = Configuration.FontColor
         self.background = Configuration.BackGround
         self.running = False
@@ -44,10 +44,10 @@ class UserFacer:
         self.size = Configuration.SW, Configuration.SH = Configuration.ScreenSize = size
         Configuration.ButtonSize = (size[0]) // 6
         Configuration.ButtonMargin = size[0] // 20
-        self.Font = getFont(Font, self.fontSize())
+        self.Font = getFont(Con.Font, self.fontSize())
 
     def startingAnimation(self):
-        loader = Loader(self.root, int(min(self.size) * 0.5), CenterPosition,twoPoint=True)
+        loader = Loader(self.root, int(min(self.size) * 0.5), Con.CenterPosition, twoPoint=True)
         lastingTime = 500
         startTime = getTimeMil()
         while lastingTime + startTime >= getTimeMil():

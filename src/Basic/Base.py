@@ -1,18 +1,17 @@
 # coding=utf-8
 import time
-import traceback
 from platform import system
+from typing import Optional
 import pygame
 from math import pi
 import tkinter as tk
 from src.Basic import Configuration
-from src.Basic.Configuration import *  # 在其他地方有用到
 
 Con = Configuration
 freshedPages = [0]  # 用已显示帧数返回时间
 Con.ButtonShowing = system() != 'Windows'  # (Linux显示)
 
-UserFacer = None
+UserFacerOfNow = None
 
 
 def addTime():
@@ -38,10 +37,27 @@ def getTimeSec():  # 返回时间 秒
 def getFont(family, size):
     try:
         get = pygame.font.Font(family, size)
-    except Exception:
-        traceback.print_exc()
+    except FileNotFoundError as e:
+        print(e, family)
+        Con.Font = None
         get = pygame.font.Font(None, int(size))
     return get
+
+
+def getSound(path, volume=0.5):
+    try:
+        get = pygame.mixer.Sound(path)
+        get.set_volume(volume)
+        return get
+    except FileNotFoundError as e:
+        print(e, path)
+
+
+def playSound(s: Optional[pygame.mixer.Sound]):
+    try:
+        s.play() if Con.IfSound else None
+    except Exception:
+        pass
 
 
 def angleToFloat(angle):
@@ -79,14 +95,17 @@ class Setting:
         self.RelShowing = tk.BooleanVar()
         self.ButtonShowing = tk.BooleanVar()
         self.EnemySleepTimeShowing = tk.BooleanVar()
+        self.NoCD = tk.BooleanVar()
+        self.IfSound = tk.BooleanVar()
+
         self.FullScreen.set(Con.FullScreen)
         self.RelShowing.set(Con.RelShowing)
         self.ButtonShowing.set(Con.ButtonShowing)
         self.EnemySleepTimeShowing.set(Con.EnemySleepTimeShowing)
         self.ParticlesShowing.set(Con.ParticlesShowing)
         self.Invincible.set(Con.Invincible)
-        self.NoCD = tk.BooleanVar()
         self.NoCD.set(Con.NoCD)
+        self.IfSound.set(Con.IfSound)
         self.advanceFeaturesVar = [self.NoCD, self.Invincible]  # 高级功能变量，注意要与Configuration中一致
 
     def __getattr__(self, item):
@@ -95,10 +114,9 @@ class Setting:
     # noinspection PyAttributeOutsideInit
     def prepareWindow(self):
         self.window.title('设置')
-        self.window.geometry(f'{Con.MinSize[0]}x{Con.MinSize[1]}+10+10')
 
         fullScreenButton = tk.Checkbutton(self.window, text='全屏', variable=self.FullScreen,
-                                          command=UserFacer.fullScreen)
+                                          command=UserFacerOfNow.fullScreen)
         invincibleButton = tk.Checkbutton(self.window, text='无敌', variable=self.Invincible)
         noCDButton = tk.Checkbutton(self.window, text='没有CD', variable=self.NoCD)
         buttonShowingButton = tk.Checkbutton(self.window, text='显示控制按钮', variable=self.ButtonShowing)
@@ -106,11 +124,13 @@ class Setting:
         particlesShowingButton = tk.Checkbutton(self.window, text='显示粒子与效果', variable=self.ParticlesShowing)
         enemySleepTimeShowingButton = tk.Checkbutton(self.window, text='显示每个敌人移动间隙和单次移动时间（毫秒）',
                                                      variable=self.EnemySleepTimeShowing)
+        ifSoundButton = tk.Checkbutton(self.window, text='播放音效', variable=self.IfSound)
         confirmButton = tk.Button(self.window, text='确认', command=self.confirm)
 
         fullScreenButton.pack()
         invincibleButton.pack()
         noCDButton.pack()
+        ifSoundButton.pack()
         buttonShowingButton.pack()
         relShowingButton.pack()
         particlesShowingButton.pack()
@@ -185,6 +205,7 @@ class Setting:
         Con.RelShowing = self.RelShowing.get()
         Con.ButtonShowing = self.ButtonShowing.get()
         Con.ParticlesShowing = self.ParticlesShowing.get()
+        Con.IfSound = self.IfSound.get()
 
 
 class MyWidget(pygame.Surface):
@@ -258,7 +279,7 @@ class Button(MyWidget):
         pygame.draw.circle(self, Con.ButtonBorderColor, [i // 2 for i in self.size],
                            Con.ButtonSize // 2, 3)  # 按钮边框
         # 摆放按钮图标
-        self.font = pygame.font.Font(Con.Font, 15)
+        self.font = getFont(Con.Font, 15)
         self.icon = self.font.render('←→↑#'[self.command], True, Con.FontColor)
         iw, ih = self.icon.get_size()
         iconPos = self.w // 2 - iw // 2, self.h // 2 - ih // 2

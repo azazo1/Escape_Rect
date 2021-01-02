@@ -1,6 +1,8 @@
 # coding=utf-8
 import random
 import sys
+import traceback
+
 from src.Basic.Base import *
 from src.Char.Enemy import Enemy
 from src.Char.Player import Player
@@ -86,7 +88,7 @@ class GameScreen:
                     if event.type == pygame.QUIT:
                         self.close()
                         return
-                if player.check(self.manager.sprites()):  # 受伤判定，同时检查玩家是否死亡
+                if player.checkHurtOrDead(self.manager.sprites()):  # 受伤判定，同时检查玩家是否死亡
                     self.manager.updateCondition()
                     self.flush(player.rect.center)
                     self.close()

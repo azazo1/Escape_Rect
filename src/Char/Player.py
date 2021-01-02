@@ -55,6 +55,13 @@ class Player(MyChar):
         self.initRushing()
         self.initParticles()
         self.initSkilling()
+        self.initSound()
+
+    def initSound(self):
+        self.rushSound = getSound(Con.RushSound)
+        self.jumpSound = getSound(Con.JumpSound)
+        self.hurtSound = getSound(Con.HurtSound)
+        self.deadSound = getSound(Con.DeadSound)
 
     def initLife(self):
         self.lives = self.olives = Configuration.Lives  # 生命数
@@ -107,7 +114,8 @@ class Player(MyChar):
     def rush(self, pos: list):  # 用center位置判断冲刺
         nowTime = getTimeMil()
         if self.lastRushTime + self.rushSleepTime < nowTime or Configuration.NoCD:
-            self.jumptimes  = 0
+            playSound(self.rushSound)
+            self.jumptimes = 0
             self.jumping = False
             self.rushing = True
             self.rushArc = self.rect.center, tuple(pos)
@@ -124,10 +132,11 @@ class Player(MyChar):
     def jump(self):
         if self.lastJumpTime + self.jumpingSleepTime > getTimeMil():
             return
-        #if self.jumptimes == 0:
-           # self.move(0,-self.target.get_rect().height//5)
+        # if self.jumptimes == 0:
+        # self.move(0,-self.target.get_rect().height//5)
         self.jumptimes += 1
         if self.jumptimes <= self.jumpmaxtimes:
+            playSound(self.jumpSound)
             self.lastJumpTime = getTimeMil()
             self.jumping = True
             self.jumprest = self.jumpSize
@@ -202,7 +211,7 @@ class Player(MyChar):
             self.move(0, down)
         self.lastFallTime = nowTime
 
-    def check(self, sprites):
+    def checkHurtOrDead(self, sprites):
         nowtime = getTimeMil()
         if self.lastSkillTime + self.skilllastedtime <= nowtime:  # 解除保护罩
             self.skillingposition = -self.skillrange, -self.skillrange
@@ -211,9 +220,13 @@ class Player(MyChar):
             if sprite.rect.left < self.rect.midtop[0] < sprite.rect.right and \
                     sprite.rect.top < self.rect.midtop[1] < sprite.rect.bottom and \
                     nowtime >= self.lastHurtTime + self.undeadabletime:
+                playSound(self.hurtSound)
                 self.lastHurtTime = nowtime
                 self.lives -= not Configuration.Invincible  # 用了True为1，False为0
-                return self.lives <= 0
+                dead = self.lives <= 0
+                if dead:
+                    playSound(self.deadSound)
+                return dead
 
     def update(self, *args, **kwargs):
         super(Player, self).update()

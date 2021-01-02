@@ -1,6 +1,4 @@
 # coding=utf-8
-import pygame
-
 from src.Basic.Base import *
 from src.Char import Player, Enemy
 
@@ -8,16 +6,16 @@ from src.Char import Player, Enemy
 class GroupManager(pygame.sprite.Group):
     endProcess = 20  # 胜利Process
 
-    def __init__(self, targetscreen):
+    def __init__(self, targetScreen):
         super(GroupManager, self).__init__()
-        self.lasttime = getTimeMil()
+        self.lastTime = getTimeMil()
         self.buttons = []
         # noinspection PyTypeChecker
         self.player: Player.Player = None
         self.process = 0  # 初始Process
-        self.Processincrease = 0.05  # Process增长速度
+        self.processIncrease = 0.05  # Process增长速度
         self.winnerProcess = 35  # 胜利MovePer
-        self.target: MyFrame = targetscreen
+        self.target: MyFrame = targetScreen
 
         self.rightkey = [pygame.K_d, pygame.K_RIGHT]
         self.leftkey = [pygame.K_a, pygame.K_LEFT]
@@ -28,15 +26,17 @@ class GroupManager(pygame.sprite.Group):
         self.playermaxstatictime = 5000  # 玩家最大静止时间
         self.playlastposition = (0, 0)
 
+
+
     def setplayer(self, player):
         self.player = player
 
     def updateCondition(self, *args, **kwargs):
         nowtime = getTimeMil()
         horizontalWalk = False
-        if nowtime - self.lasttime > 1000:  # 增长process
-            self.process += self.Processincrease
-            self.lasttime = nowtime
+        if nowtime - self.lastTime > 1000:  # 增长process
+            self.process += self.processIncrease
+            self.lastTime = nowtime
 
         for b in self.buttons:  # Button判定
             b: Button
@@ -46,15 +46,16 @@ class GroupManager(pygame.sprite.Group):
                 if c in [0, 1]:
                     horizontalWalk = True
 
+
         # 检测键盘
         keys = pygame.key.get_pressed()
-        if not horizontalWalk and self.checkkey(keys, self.rightkey):
+        if not horizontalWalk and self.checkKey(keys, self.rightkey):  # 向右走
             self.player.right()
-        if not horizontalWalk and self.checkkey(keys, self.leftkey):
+        if not horizontalWalk and self.checkKey(keys, self.leftkey):  # 向左走
             self.player.left()
-        if self.checkkey(keys, self.downkey):  # 技能判定
+        if self.checkKey(keys, self.downkey):  # 技能判定
             self.player.skill()
-        if self.checkkey(keys, self.jumpkey):  # 跳跃判定
+        if self.checkKey(keys, self.jumpkey):  # 跳跃判定
             self.player.jump()
         if pygame.mouse.get_pressed(3)[2]:  # 冲刺判定
             targetPos = [ep - tp for tp, ep in zip(self.target.pos, pygame.mouse.get_pos())]
@@ -81,7 +82,8 @@ class GroupManager(pygame.sprite.Group):
         self.player.update()
         super(GroupManager, self).update()
 
-    def checkkey(self, keys, direct):
+    @staticmethod
+    def checkKey(keys, direct):
         for i in direct:
             try:
                 if keys[i]:
