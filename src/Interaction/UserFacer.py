@@ -14,7 +14,7 @@ class UserFacer:
 
     def __init__(self):
         clearTime()
-        Base.UserFacerOfNow = self
+        Base.CurrentUserFacer = self
         self.clock = pygame.time.Clock()
         self.root = None
         self.size = self.startSize = Configuration.ScreenSize
@@ -27,6 +27,7 @@ class UserFacer:
         self.fontColor = Configuration.FontColor
         self.background = Configuration.BackGround
         self.running = False
+        self.playerNum = 1
         self.min_enemy_num = Configuration.LeastEnemy  # 最小敌人数
         self.max_enemy_num = Configuration.MostEnemy  # 最大敌人数
         self.last_enemy_num = 0  # 可忽视
@@ -34,6 +35,8 @@ class UserFacer:
         self.startKey = [pygame.K_RETURN, pygame.K_r]
         self.quitKey = [pygame.K_ESCAPE, pygame.K_q]
         self.fullKey = [pygame.K_F11]
+        self.upPlayerKey = [pygame.K_UP]
+        self.downPlayerKey = [pygame.K_DOWN]
         Configuration.ButtonSize = (self.size[0] + self.size[1]) // 2 // 6
         self.clickRect = pygame.Rect(
             [0, int(self.size[1] - 0.06 * self.size[1]), self.size[0], int(0.06 * self.size[1])])  # 点击开始游戏区域
@@ -47,7 +50,7 @@ class UserFacer:
         self.Font = getFont(Con.Font, self.fontSize())
 
     def startingAnimation(self):
-        loader = Loader(self.root, int(min(self.size) * 0.5), Con.CenterPosition, twoPoint=True)
+        loader = Loader(self.root, int(min(self.size) * 0.5), CENTER_POSITION, twoPoint=True)
         lastingTime = 500
         startTime = getTimeMil()
         while lastingTime + startTime >= getTimeMil():
@@ -63,7 +66,10 @@ class UserFacer:
         self.clock.tick(self.fps)
         addTime()
 
-    def showMenu(self, time, escapetimes, process, lives, first, win=False):
+    def increasePlayer(self, x):
+        self.playerNum = max(self.playerNum + x, 1)
+
+    def showMenu(self, time, escapetimes, process, lives, first, situation):
         self.running = True
         self.root = pygame.display.set_mode(self.size, pygame.RESIZABLE)
         self.resize(self.root.get_size(), pygame.RESIZABLE)
@@ -94,6 +100,10 @@ class UserFacer:
                         return False
                     if event.key in self.fullKey:
                         self.fullScreen()
+                    if event.key in self.upPlayerKey:
+                        self.increasePlayer(1)
+                    if event.key in self.downPlayerKey:
+                        self.increasePlayer(-1)
                 if event.type == pygame.VIDEORESIZE:
                     if Con.FullScreen:  # 全屏不缩放
                         continue
@@ -124,7 +134,7 @@ class UserFacer:
 
             # 摆放文字
             otext2 = self.Font.render(
-                '' if first else f'EscapeTimes:{escapetimes} Process:{process / GroupManager.endProcess:.2%} Lives:{lives}',
+                '' if first else f'EscapeTimes:{escapetimes} Process:{process:.2%} Lives:{lives}',
                 True, self.fontColor)
             w, h = otext2.get_rect().size
             if w > 1 and h > 1:
@@ -132,8 +142,15 @@ class UserFacer:
                 self.root.blit(otext2, text2pos)
 
             # 摆放底部文字
-            textbottom = self.Font.render(['[RETURN] START, [TAB] SETTING', "You Win!"][win],
-                                          True, self.fontColor)
+            textbottom = self.Font.render(
+                {
+                    LOST: "You Lost...",
+                    WIN: "You Win!",
+                    RUNNING: "",
+                    RESTING: "[RETURN] START, [TAB] SETTING",
+                }[situation] + f' PlayerNum:{self.playerNum}',
+                True, self.fontColor
+            )
             w, h = textbottom.get_rect().size
             textbottommovedistansex = sw - w
             textbottompos = (int(textbottommovedistansex * mouseposx / sw), sh - textbottom.get_rect().height)  # 浮动式摆法
@@ -150,20 +167,21 @@ class UserFacer:
 
     def go(self):
         first = 1
-        time = 0
-        escapetimes = 0
+        runningTime = 0
+        escapeTimes = 0
         process = 0
         lives = 0
-        iswinning = False
+        situation = RESTING
         while 1:
-            if not self.showMenu(time, escapetimes, process, lives, first=first, win=iswinning):
+            if not self.showMenu(runningTime, escapeTimes, process, lives, first=first, situation=situation):
                 break
             first = 0
             game = GameScreen(self.root, self.size, fps=self.fps, fullScreen=Con.FullScreen)
             game.enemy_num = self.last_enemy_num = randint(self.min_enemy_num, self.max_enemy_num)
             game.Font = self.Font
             game.fontcolor = self.fontColor
-            time, escapetimes, process, lives, iswinning = game.gameloop()
+            runningTime, escapeTimes, process, lives, situation = game.gameloop(self.playerNum)
+            pass
 
     def fullScreen(self):
         if self.running:

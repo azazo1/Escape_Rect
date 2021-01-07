@@ -1,17 +1,19 @@
 # coding=utf-8
 import time
 from platform import system
-from typing import Optional
+from typing import Optional, Tuple
 import pygame
 from math import pi
 import tkinter as tk
 from src.Basic import Configuration
+from src.Basic.Constant import *
+import src.Interaction.UserFacer as UserFacerModule
 
 Con = Configuration
 freshedPages = [0]  # 用已显示帧数返回时间
 Con.ButtonShowing = system() != 'Windows'  # (Linux显示)
 
-UserFacerOfNow = None
+CurrentUserFacer = None  # type: UserFacerModule.UserFacer
 
 
 def addTime():
@@ -79,6 +81,22 @@ def printToCenter(target: pygame.Surface, src: pygame.Surface, deltaX=0, deltaY=
     target.blit(src, pos)
 
 
+def LCenterInR(inside, outside):
+    """
+    import src.Char.Character as CharacterModule
+    左侧对象的中心是否处于右侧对象之中
+    :type inside: CharacterModule.MyChar
+    :type outside: CharacterModule.MyChar
+    :return: True/False
+    """
+
+    outRect = outside.rect
+    center = inside.pos
+    if ((outRect.left < center[0] < outRect.right) and
+            (outRect.top < center[1] < outRect.bottom)):
+        return True
+
+
 class Setting:
     def __init__(self):
         self.bg = '#{:x}{:x}{:x}'.format(*Con.BackGround)
@@ -99,8 +117,8 @@ class Setting:
         self.IfSound = tk.BooleanVar()
 
         self.FullScreen.set(Con.FullScreen)
-        self.RelShowing.set(Con.RelShowing)
-        self.ButtonShowing.set(Con.ButtonShowing)
+        self.RelShowing.set(Con.RelativeShowing)
+        # self.ButtonShowing.set(Con.ButtonShowing) TODO 新版本不再支持按钮
         self.EnemySleepTimeShowing.set(Con.EnemySleepTimeShowing)
         self.ParticlesShowing.set(Con.ParticlesShowing)
         self.Invincible.set(Con.Invincible)
@@ -116,13 +134,13 @@ class Setting:
         self.window.title('设置')
 
         fullScreenButton = tk.Checkbutton(self.window, text='全屏', variable=self.FullScreen,
-                                          command=UserFacerOfNow.fullScreen)
+                                          command=CurrentUserFacer.fullScreen)
         invincibleButton = tk.Checkbutton(self.window, text='无敌', variable=self.Invincible)
         noCDButton = tk.Checkbutton(self.window, text='没有CD', variable=self.NoCD)
-        buttonShowingButton = tk.Checkbutton(self.window, text='显示控制按钮', variable=self.ButtonShowing)
+        # buttonShowingButton = tk.Checkbutton(self.window, text='显示控制按钮', variable=self.ButtonShowing) TODO 新版本不再支持按钮
         relShowingButton = tk.Checkbutton(self.window, text='视角随角色移动', variable=self.RelShowing)
         particlesShowingButton = tk.Checkbutton(self.window, text='显示粒子与效果', variable=self.ParticlesShowing)
-        enemySleepTimeShowingButton = tk.Checkbutton(self.window, text='显示每个敌人移动间隙和单次移动时间（毫秒）',
+        enemySleepTimeShowingButton = tk.Checkbutton(self.window, text='显示每个敌人移动间隙',
                                                      variable=self.EnemySleepTimeShowing)
         ifSoundButton = tk.Checkbutton(self.window, text='播放音效', variable=self.IfSound)
         confirmButton = tk.Button(self.window, text='确认', command=self.confirm)
@@ -131,7 +149,7 @@ class Setting:
         invincibleButton.pack()
         noCDButton.pack()
         ifSoundButton.pack()
-        buttonShowingButton.pack()
+        # buttonShowingButton.pack() TODO 新版本不再支持按钮
         relShowingButton.pack()
         particlesShowingButton.pack()
         enemySleepTimeShowingButton.pack()
@@ -202,8 +220,8 @@ class Setting:
     def save(self):
         # Con.FullScreen = self.FullScreen.get() # 全屏由UserFacer修改
         Con.EnemySleepTimeShowing = self.EnemySleepTimeShowing.get()
-        Con.RelShowing = self.RelShowing.get()
-        Con.ButtonShowing = self.ButtonShowing.get()
+        Con.RelativeShowing = self.RelShowing.get()
+        # Con.ButtonShowing = self.ButtonShowing.get() TODO 新版本不再支持按钮
         Con.ParticlesShowing = self.ParticlesShowing.get()
         Con.IfSound = self.IfSound.get()
 
@@ -212,13 +230,25 @@ class MyWidget(pygame.Surface):
     def __init__(self, parent, size, pos=(0, 0), alpha=None):
         super(MyWidget, self).__init__(size)
         self.parent: MyFrame = parent
-        self.size = self.w, self.h = size
-        self.pos = self.x, self.y = pos
+        self._rect = self.get_rect()
+        self.start_pos = pos  # type:Tuple[int, int]
         self.set_alpha(alpha)
         self.alpha = alpha
 
+    @property
+    def rect(self):
+        return self._rect
+
+    def get_start_pos(self):
+        return self.rect.topleft
+
+    def set_start_pos(self, pos):
+        self.rect.topleft = pos
+
+    start_pos = property(get_start_pos, set_start_pos)
+
     def print(self):
-        self.parent.blit(self, self.pos)
+        self.parent.blit(self, self.start_pos)
 
 
 class MyFrame(MyWidget):
@@ -242,64 +272,66 @@ class MyFrame(MyWidget):
 
     def print(self, pos=None):
         if pos:
-            self.pos = pos
-        self.parent.blit(self, self.pos)
+            self.start_pos = pos
+        self.parent.blit(self, self.start_pos)
 
     def clearResize(self, w=None, h=None):
-        result = MyFrame(self.parent, (w if w else self.size[0], h if h else self.size[1]), self.pos,
+        result = MyFrame(self.parent, (w if w else self.get_size()[0], h if h else self.get_size()[1]), self.start_pos,
                          self.alpha)
         return result
 
+# TODO 新版本不再支持按钮
 
-class Button(MyWidget):
-
-    def __init__(self, parent: MyFrame, command: int):
-        """
-        :param command: 按钮功能，左移：0，右移：1，跳跃：2，技能：3.
-        """
-
-        super(Button, self).__init__(parent, (Con.ButtonSize, Con.ButtonSize),
-                                     (0, 0))
-        self.parent.children.append(self)
-        self.command = command
-        self.margin = Con.ButtonMargin
-        # 放置位置
-        w, h = self.parent.get_size()
-        self.positions = [
-            (self.margin, self.margin),
-            (self.margin + self.w + self.margin * 2, self.margin),
-            (w - self.w * 2 - self.margin * 3, self.margin),
-            (w - self.margin - self.w, self.margin)
-        ]
-        self.pos = self.x, self.y = self.positions[self.command]
-        # 画背景，边框，填充
-        self.fill(Con.BackGround)  # 初始背景
-        pygame.draw.circle(self, Con.ButtonColor, [i // 2 for i in self.size],
-                           Con.ButtonSize // 2)  # 按钮填充
-        pygame.draw.circle(self, Con.ButtonBorderColor, [i // 2 for i in self.size],
-                           Con.ButtonSize // 2, 3)  # 按钮边框
-        # 摆放按钮图标
-        self.font = getFont(Con.Font, 15)
-        self.icon = self.font.render('←→↑#'[self.command], True, Con.FontColor)
-        iw, ih = self.icon.get_size()
-        iconPos = self.w // 2 - iw // 2, self.h // 2 - ih // 2
-        self.blit(self.icon, iconPos)
-
-    def setParent(self, parent: MyFrame):
-        self.parent.children.append(self)
-        self.parent = parent
-
-    def checkPressed(self):
-        if not Con.ButtonShowing:
-            return
-        if pygame.mouse.get_pressed(3)[0]:
-            return self.checkOver()
-
-    def checkOver(self):  # 检查鼠标是否悬在按钮上
-        MouseX, MouseY = tuple(pygame.mouse.get_pos())
-        absX, absY = [a + b + Con.ButtonSize // 2 for a, b in zip(self.parent.pos, self.pos)]  # 按钮的中间位置
-        if (MouseX - absX) ** 2 + (MouseY - absY) ** 2 <= (Con.ButtonSize // 2) ** 2:
-            return True
-
-    def print(self):
-        self.parent.blit(self, self.pos)
+# class Button(MyWidget):
+#
+#     def __init__(self, parent: MyFrame, command: int):
+#         """
+#         :param command: 按钮功能，左移：0，右移：1，跳跃：2，技能：3.
+#         """
+#
+#         super(Button, self).__init__(parent, (Con.ButtonSize, Con.ButtonSize),
+#                                      (0, 0))
+#         self.parent.children.append(self)
+#         self.command = command
+#         self.margin = Con.ButtonMargin
+#         # 放置位置
+#         w, h = self.parent.get_size()
+#         self.positions = [
+#             (self.margin, self.margin),
+#             (self.margin + self.w + self.margin * 2, self.margin),
+#             (w - self.w * 2 - self.margin * 3, self.margin),
+#             (w - self.margin - self.w, self.margin)
+#         ]
+#         self.pos = self.x, self.y = self.positions[self.command]
+#         # 画背景，边框，填充
+#         self.fill(Con.BackGround)  # 初始背景
+#         pygame.draw.circle(self, Con.ButtonColor, [i // 2 for i in self.size],
+#                            Con.ButtonSize // 2)  # 按钮填充
+#         pygame.draw.circle(self, Con.ButtonBorderColor, [i // 2 for i in self.size],
+#                            Con.ButtonSize // 2, 3)  # 按钮边框
+#         # 摆放按钮图标
+#         self.font = getFont(Con.Font, 15)
+#         self.icon = self.font.render('←→↑#'[self.command], True, Con.FontColor)
+#         iw, ih = self.icon.get_size()
+#         iconPos = self.w // 2 - iw // 2, self.h // 2 - ih // 2
+#         self.blit(self.icon, iconPos)
+#
+#     def setParent(self, parent: MyFrame):
+#         if self not in self.parent.children:
+#             self.parent.children.append(self)
+#             self.parent = parent
+#
+#     def checkPressed(self):
+#         if not Con.ButtonShowing:
+#             return
+#         if pygame.mouse.get_pressed(3)[0]:
+#             return self.checkOver()
+#
+#     def checkOver(self):  # 检查鼠标是否悬在按钮上
+#         MouseX, MouseY = tuple(pygame.mouse.get_pos())
+#         absX, absY = [a + b + Con.ButtonSize // 2 for a, b in zip(self.parent.start_pos, self.pos)]  # 按钮的中间位置
+#         if (MouseX - absX) ** 2 + (MouseY - absY) ** 2 <= (Con.ButtonSize // 2) ** 2:
+#             return True
+#
+#     def print(self):
+#         self.parent.blit(self, self.pos)

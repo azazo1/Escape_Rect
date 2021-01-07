@@ -1,47 +1,57 @@
 # coding=utf-8
 import math
-from random import randint
+from random import randint, choice
 from src.Char.Character import MyChar
+import src.Char.Player as PlayerModule
 from src.Basic.Base import *
 
 
 class Enemy(MyChar):
-    def __init__(self, targetscreen, width, height, color=(0, 0, 255)):
-        super().__init__(targetscreen, width, height, color)
+    def __init__(self, targetScreen, width, height, color=(0, 0, 255)):
+        super().__init__(targetScreen, width, height, color)
         if randint(0, 1):  # 随机从左上角或右上角出现
-            self.rect.right = targetscreen.get_rect()[2]
-        self.distanse = (self.target.get_rect().height + self.target.get_rect().width) // 2 \
-                        * 0.2  # 随机移动到玩家的最大距离（越大玩家越安全）
+            self.rect.right = targetScreen.get_rect()[2]
+        self.distanse = (sum(self.target.get_size())
+                         // 6)  # 随机移动到玩家的最大距离（越大玩家越安全）
         self.movetimes = 0
         self.maxSleepTime = 1000  # 移动最大休息时间
-        self.sleeptime = randint(0, self.maxSleepTime)
-        self.lives = 10  # 生命数
+        self.sleepTime = randint(0, self.maxSleepTime)
         self.moving = False
         self.lastMoveTime = 0
         self.movingTime = 700  # 移动持续时间
         self.moveArc = (self.rect.center, self.rect.center)  # 移动路径
 
     def checkSkilled(self):
-        player = self.groups()[0].player
-        sx, sy = player.skillingposition
-        srange = player.skillrange
-        x, y = self.rect.center
-        square_sum = (sx - x) ** 2 + (sy - y) ** 2
-        if square_sum < srange ** 2:  # 在技能范围内
-            effect = player.skilleffect
-            distance = math.sqrt(square_sum)
-            cos = distance / ((x - sx) or 0.001)
-            sin = distance / ((y - sy) or 0.001)
-            self.smoothTo(effect * cos + x, effect * sin + y)
+        for player in self.playerHandler.getPlayers():
+            sx, sy = player.skillPosition
+            srange = player.skillrange
+            x, y = self.rect.center
+            square_sum = (sx - x) ** 2 + (sy - y) ** 2
+            if square_sum < srange ** 2:  # 在技能范围内
+                effect = player.skilleffect
+                distance = math.sqrt(square_sum)
+                cos = distance / ((x - sx) or 0.001)
+                sin = distance / ((y - sy) or 0.001)
+                self.smoothTo(effect * cos + x, effect * sin + y)
 
-    def summonPoint(self, hit=None):
-        if hit:
-            d = 0  # 不会移到玩家以外的地方
-        else:
-            d = int(self.distanse)
-        x, y = self.groups()[0].player.rect.center
-        targetx = randint(-d, d) + x
-        targety = randint(-d, d) + y
+    def summonPoint(self, player=None, hit=False):
+        """
+        为Enemy对象生成一个移动目标
+        :param player: 被攻击的玩家为None则随机抽取玩家
+        :param hit: 直接攻击玩家
+        :return:
+        """
+        str(player)  # type: PlayerModule.Player
+        if not player:
+            alivePlayers = list(filter(lambda a: a, self.group.players))
+            if not alivePlayers:
+                return
+            player = choice(alivePlayers)  # 选中顶层管理器里的players
+        d = int(self.distanse) if not hit else 0  # 目标位置与玩家的距离，为零则去到玩家位置
+        l1, l2 = randint(-d, d), randint(-d, d)
+        x, y = player.rect.center
+        targetx = l1 + x
+        targety = l2 + y
         self.smoothTo(targetx, targety)
 
     def moveto(self, x, y):
@@ -67,29 +77,33 @@ class Enemy(MyChar):
         self.moveArc = self.rect.center, (x, y)
         self.lastMoveTime = getTimeMil()
 
-    def update(self, *args, **kwargs):
+    def update(self, text: str = None):
+        """
+        更新敌人的状态
+        :return:
+        """
         self.movingTime = max(-0.04 * getTimeMil() + 2000,
-                              150)  # 随时间增加movingTime越小，最小为500
-        super(Enemy, self).update(
-            text=f'{self.sleeptime} {self.movingTime:.0f}' if Configuration.EnemySleepTimeShowing else ' ')
-        if randint(0, 1000) < 30 and (
-                (getTimeMil() - self.lastMoveTime) > self.sleeptime) and not self.moving:
+                              150)  # 随时间增加movingTime越小，最小为max中的定者
+        if (
+                randint(0, 1000) < 15
+                and ((getTimeMil() - self.lastMoveTime) > self.sleepTime)
+                and not self.moving
+        ):
             self.summonPoint()
             self.movetimes += 1
         else:
             self.checkSkilled()
-        self.smoothmove()
+        self.smoothMove()
+        super(Enemy, self).update(
+            text=f'{self.sleepTime}' if Configuration.EnemySleepTimeShowing else '')
 
-    def smoothmove(self):
+    def smoothMove(self):
         if self.moving:
             nowTime = getTimeMil()
             process = max(((nowTime - self.lastMoveTime) / self.movingTime) ** 0.3, 0.01)  # 冲刺进度
             start, end = self.moveArc
             # 计算坐标
             nowPos = [(e - s) * process + s for s, e in zip(start, end)]
-            # 使中点落在目标位置上
-            nowPos[0] -= self.rect.width // 2
-            nowPos[1] -= self.rect.height // 2
             self.moveto(*nowPos)
             if process >= 1:
                 self.moving = False

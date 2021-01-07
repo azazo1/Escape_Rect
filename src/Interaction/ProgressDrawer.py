@@ -50,7 +50,7 @@ class Loader:
                         start, end, width=self.thick)
         text = self.font.render(f'{self.percent:.2%}', True, Con.FontColor)
         printToCenter(self.surfaceFrame, text)
-        if self.pos == Con.CenterPosition:
+        if self.pos == CENTER_POSITION:
             printToCenter(self.screen, self.surfaceFrame)
         else:
             self.screen.blit(self.surfaceFrame, self.pos)

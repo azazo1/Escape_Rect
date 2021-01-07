@@ -6,18 +6,7 @@
   </component>
   <component name="ChangeListManager">
     <list default="true" id="a7348c1b-8ea7-40c2-a043-4f344bb8ca25" name="Default Changelist" comment="0.45.7.10 修复了顶部文字不显示的BUG">
-      <change beforePath="$PROJECT_DIR$/.idea/Escape_Rect.iml" beforeDir="false" afterPath="$PROJECT_DIR$/.idea/Escape_Rect.iml" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/.idea/misc.xml" beforeDir="false" afterPath="$PROJECT_DIR$/.idea/misc.xml" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/.idea/workspace.xml" beforeDir="false" afterPath="$PROJECT_DIR$/.idea/workspace.xml" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/consola.ttf" beforeDir="false" />
-      <change beforePath="$PROJECT_DIR$/src/Basic/Base.py" beforeDir="false" afterPath="$PROJECT_DIR$/src/Basic/Base.py" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/src/Basic/Configuration.py" beforeDir="false" afterPath="$PROJECT_DIR$/src/Basic/Configuration.py" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/src/Char/Character.py" beforeDir="false" afterPath="$PROJECT_DIR$/src/Char/Character.py" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/src/Char/Player.py" beforeDir="false" afterPath="$PROJECT_DIR$/src/Char/Player.py" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/src/GameControl/Controller.py" beforeDir="false" afterPath="$PROJECT_DIR$/src/GameControl/Controller.py" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/src/Interaction/ProgressDrawer.py" beforeDir="false" afterPath="$PROJECT_DIR$/src/Interaction/ProgressDrawer.py" afterDir="false" />
       <change beforePath="$PROJECT_DIR$/src/Interaction/Screen.py" beforeDir="false" afterPath="$PROJECT_DIR$/src/Interaction/Screen.py" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/src/Interaction/UserFacer.py" beforeDir="false" afterPath="$PROJECT_DIR$/src/Interaction/UserFacer.py" afterDir="false" />
     </list>
     <list id="7aa2f7f5-0dd6-48c6-a45f-1c41ab496297" name="Revert &quot;增加了一键重置窗口大小的功能&quot;" comment="Revert &quot;增加了一键重置窗口大小的功能&quot;&#10;&#10;This reverts commit b38a846f" />
     <option name="SHOW_DIALOG" value="false" />
@@ -41,6 +30,14 @@
     <option name="RECENT_GIT_ROOT_PATH" value="$PROJECT_DIR$" />
     <option name="UPDATE_TYPE" value="MERGE" />
   </component>
+  <component name="GitSEFilterConfiguration">
+    <file-type-list>
+      <filtered-out-file-type name="LOCAL_BRANCH" />
+      <filtered-out-file-type name="REMOTE_BRANCH" />
+      <filtered-out-file-type name="TAG" />
+      <filtered-out-file-type name="COMMIT_BY_MESSAGE" />
+    </file-type-list>
+  </component>
   <component name="ProjectId" id="1erCAdM8AzbD8EhpQfdlJJ1vM7B" />
   <component name="ProjectLevelVcsManager" settingsEditedManually="true" />
   <component name="ProjectViewState">
@@ -50,7 +47,7 @@
   </component>
   <component name="PropertiesComponent">
     <property name="RunOnceActivity.ShowReadmeOnStart" value="true" />
-    <property name="last_opened_file_path" value="$PROJECT_DIR$" />
+    <property name="last_opened_file_path" value="$PROJECT_DIR$/../_Temp" />
     <property name="restartRequiresConfirmation" value="false" />
     <property name="settings.editor.selected.configurable" value="vcs.Git" />
   </component>
@@ -63,7 +60,28 @@
       <recent name="D:\Program_Projects\Python_Projects\Escape_Rect\Char" />
     </key>
   </component>
-  <component name="RunManager">
+  <component name="RunManager" selected="Python.Main">
+    <configuration name="Lesson1" type="PythonConfigurationType" factoryName="Python" temporary="true" nameIsGenerated="true">
+      <module name="Escape_Rect" />
+      <option name="INTERPRETER_OPTIONS" value="" />
+      <option name="PARENT_ENVS" value="true" />
+      <envs>
+        <env name="PYTHONUNBUFFERED" value="1" />
+      </envs>
+      <option name="SDK_HOME" value="D:\Program Files\Python38\python.exe" />
+      <option name="WORKING_DIRECTORY" value="$PROJECT_DIR$" />
+      <option name="IS_MODULE_SDK" value="false" />
+      <option name="ADD_CONTENT_ROOTS" value="true" />
+      <option name="ADD_SOURCE_ROOTS" value="true" />
+      <option name="SCRIPT_NAME" value="$APPLICATION_CONFIG_DIR$/scratches/Lesson1.py" />
+      <option name="PARAMETERS" value="" />
+      <option name="SHOW_COMMAND_LINE" value="false" />
+      <option name="EMULATE_TERMINAL" value="false" />
+      <option name="MODULE_MODE" value="false" />
+      <option name="REDIRECT_INPUT" value="false" />
+      <option name="INPUT_FILE" value="" />
+      <method v="2" />
+    </configuration>
     <configuration name="Main" type="PythonConfigurationType" factoryName="Python" temporary="true" nameIsGenerated="true">
       <module name="Escape_Rect" />
       <option name="INTERPRETER_OPTIONS" value="" />
@@ -109,6 +127,7 @@
     <recent_temporary>
       <list>
         <item itemvalue="Python.Main" />
+        <item itemvalue="Python.Lesson1" />
       </list>
     </recent_temporary>
   </component>
@@ -214,97 +233,23 @@
     <MESSAGE value="修复了结果界面时间为零的BUG" />
     <option name="LAST_COMMIT_MESSAGE" value="修复了结果界面时间为零的BUG" />
   </component>
-  <component name="WindowStateProjectService">
-    <state x="275" y="27" key="#Inspections" timestamp="1604055531557">
-      <screen x="0" y="0" width="1366" height="738" />
-    </state>
-    <state x="275" y="27" key="#Inspections/0.0.1366.738@0.0.1366.738" timestamp="1604055531557" />
-    <state x="137" y="23" key="#com.intellij.execution.impl.EditConfigurationsDialog" timestamp="1609561824181">
-      <screen x="0" y="0" width="1366" height="738" />
-    </state>
-    <state x="137" y="23" key="#com.intellij.execution.impl.EditConfigurationsDialog/0.0.1366.738@0.0.1366.738" timestamp="1609561824181" />
-    <state x="422" y="169" key="#com.intellij.fileTypes.FileTypeChooser" timestamp="1609561052805">
-      <screen x="0" y="0" width="1366" height="738" />
-    </state>
-    <state x="422" y="169" key="#com.intellij.fileTypes.FileTypeChooser/0.0.1366.738@0.0.1366.738" timestamp="1609561052805" />
-    <state x="431" y="260" width="619" height="478" key="#xdebugger.evaluate" timestamp="1609558060040">
-      <screen x="0" y="0" width="1366" height="738" />
-    </state>
-    <state x="431" y="260" width="619" height="478" key="#xdebugger.evaluate/0.0.1366.738@0.0.1366.738" timestamp="1609558060040" />
-    <state x="272" y="11" width="827" height="711" key="CommitChangelistDialog2" timestamp="1609562512994">
-      <screen x="0" y="0" width="1366" height="738" />
-    </state>
-    <state x="272" y="11" width="827" height="711" key="CommitChangelistDialog2/0.0.1366.738@0.0.1366.738" timestamp="1609562512994" />
-    <state x="405" y="222" key="GitRewordDialog" timestamp="1603470642761">
-      <screen x="0" y="0" width="1366" height="738" />
-    </state>
-    <state x="405" y="222" key="GitRewordDialog/0.0.1366.738@0.0.1366.738" timestamp="1603470642761" />
-    <state width="1345" height="245" key="GridCell.Tab.0.bottom" timestamp="1609562439499">
-      <screen x="0" y="0" width="1366" height="738" />
-    </state>
-    <state width="1345" height="245" key="GridCell.Tab.0.bottom/0.0.1366.738@0.0.1366.738" timestamp="1609562439499" />
-    <state width="1345" height="245" key="GridCell.Tab.0.center" timestamp="1609562439499">
-      <screen x="0" y="0" width="1366" height="738" />
-    </state>
-    <state width="1345" height="245" key="GridCell.Tab.0.center/0.0.1366.738@0.0.1366.738" timestamp="1609562439499" />
-    <state width="1345" height="245" key="GridCell.Tab.0.left" timestamp="1609562439499">
-      <screen x="0" y="0" width="1366" height="738" />
-    </state>
-    <state width="1345" height="245" key="GridCell.Tab.0.left/0.0.1366.738@0.0.1366.738" timestamp="1609562439499" />
-    <state width="1345" height="245" key="GridCell.Tab.0.right" timestamp="1609562439499">
-      <screen x="0" y="0" width="1366" height="738" />
-    </state>
-    <state width="1345" height="245" key="GridCell.Tab.0.right/0.0.1366.738@0.0.1366.738" timestamp="1609562439499" />
-    <state width="1069" height="483" key="GridCell.Tab.1.bottom" timestamp="1609560973597">
-      <screen x="0" y="0" width="1366" height="738" />
-    </state>
-    <state width="1069" height="483" key="GridCell.Tab.1.bottom/0.0.1366.738@0.0.1366.738" timestamp="1609560973597" />
-    <state width="1069" height="483" key="GridCell.Tab.1.center" timestamp="1609560973597">
-      <screen x="0" y="0" width="1366" height="738" />
-    </state>
-    <state width="1069" height="483" key="GridCell.Tab.1.center/0.0.1366.738@0.0.1366.738" timestamp="1609560973597" />
-    <state width="1069" height="483" key="GridCell.Tab.1.left" timestamp="1609560973597">
-      <screen x="0" y="0" width="1366" height="738" />
-    </state>
-    <state width="1069" height="483" key="GridCell.Tab.1.left/0.0.1366.738@0.0.1366.738" timestamp="1609560973597" />
-    <state width="1069" height="483" key="GridCell.Tab.1.right" timestamp="1609560973597">
-      <screen x="0" y="0" width="1366" height="738" />
-    </state>
-    <state width="1069" height="483" key="GridCell.Tab.1.right/0.0.1366.738@0.0.1366.738" timestamp="1609560973597" />
-    <state x="184" y="10" key="SettingsEditor" timestamp="1603449377071">
-      <screen x="0" y="0" width="1366" height="738" />
-    </state>
-    <state x="184" y="10" key="SettingsEditor/0.0.1366.738@0.0.1366.738" timestamp="1603449377071" />
-    <state x="326" y="121" key="Vcs.Push.Dialog.v2" timestamp="1603492911745">
-      <screen x="0" y="0" width="1366" height="738" />
-    </state>
-    <state x="326" y="121" key="Vcs.Push.Dialog.v2/0.0.1366.738@0.0.1366.738" timestamp="1603492911745" />
-    <state x="363" y="192" key="com.intellij.ide.util.TipDialog" timestamp="1604128720774">
-      <screen x="0" y="0" width="1366" height="738" />
-    </state>
-    <state x="363" y="192" key="com.intellij.ide.util.TipDialog/0.0.1366.738@0.0.1366.738" timestamp="1604128720774" />
-    <state x="475" y="285" key="com.intellij.openapi.vcs.update.UpdateOrStatusOptionsDialogupdate-v2" timestamp="1603461281121">
-      <screen x="0" y="0" width="1366" height="738" />
-    </state>
-    <state x="475" y="285" key="com.intellij.openapi.vcs.update.UpdateOrStatusOptionsDialogupdate-v2/0.0.1366.738@0.0.1366.738" timestamp="1603461281121" />
-    <state x="247" y="104" key="com.intellij.xdebugger.impl.breakpoints.ui.BreakpointsDialogFactory$2" timestamp="1604074382860">
-      <screen x="0" y="0" width="1366" height="738" />
-    </state>
-    <state x="247" y="104" key="com.intellij.xdebugger.impl.breakpoints.ui.BreakpointsDialogFactory$2/0.0.1366.738@0.0.1366.738" timestamp="1604074382860" />
-    <state x="424" y="10" key="refactoring.ChangeSignatureDialog" timestamp="1603527683465">
-      <screen x="0" y="0" width="1366" height="738" />
-    </state>
-    <state x="424" y="10" key="refactoring.ChangeSignatureDialog/0.0.1366.738@0.0.1366.738" timestamp="1603527683465" />
-    <state x="346" y="59" width="672" height="678" key="search.everywhere.popup" timestamp="1604057099634">
-      <screen x="0" y="0" width="1366" height="738" />
-    </state>
-    <state x="346" y="59" width="672" height="678" key="search.everywhere.popup/0.0.1366.738@0.0.1366.738" timestamp="1604057099634" />
-  </component>
   <component name="XDebuggerManager">
-    <watches-manager>
-      <configuration name="PythonConfigurationType">
-        <watch expression="self.fontSize()" language="Python" />
-      </configuration>
-    </watches-manager>
+    <breakpoint-manager>
+      <breakpoints>
+        <line-breakpoint enabled="true" type="python-line">
+          <url>file://$PROJECT_DIR$/src/Char/Player.py</url>
+          <line>160</line>
+          <option name="timeStamp" value="51" />
+        </line-breakpoint>
+        <line-breakpoint enabled="true" type="python-line">
+          <url>file://$PROJECT_DIR$/src/Char/Player.py</url>
+          <line>26</line>
+          <option name="timeStamp" value="52" />
+        </line-breakpoint>
+      </breakpoints>
+      <breakpoints-defaults>
+        <breakpoint type="python-line" />
+      </breakpoints-defaults>
+    </breakpoint-manager>
   </component>
 </project>
